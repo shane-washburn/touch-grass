@@ -4,8 +4,9 @@ import {
   type TranslateResponse,
 } from "@emoji/shared";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8787";
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8787"
+).replace(/\/+$/, "");
 
 /**
  * The ONLY place the frontend knows about the backend: a single typed client
