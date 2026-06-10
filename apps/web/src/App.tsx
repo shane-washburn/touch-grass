@@ -14,6 +14,7 @@ import {
   type TranslationResult,
 } from "@emoji/shared";
 import { translate } from "./lib/api";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function App() {
   const [direction, setDirection] = useState<Direction>("text-to-emoji");
@@ -244,6 +245,7 @@ export default function App() {
           (Gemini)
         </footer>
       </div>
+      <Analytics />
     </div>
   );
 }
