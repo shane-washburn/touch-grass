@@ -73,13 +73,14 @@ Open the web URL and translate something. Done.
 
 ## How it works
 
-- `apps/api/api/[[...route]].ts` is a catch-all serverless function that mounts
-  the shared Hono `app` under `/api`, so production routes are `/api/health`
-  and `/api/v1/translate`. It uses `@hono/node-server/vercel`'s `handle()` (the
+- `apps/api/api/index.ts` is the serverless function. It mounts the shared Hono
+  `app` under `/api`, so production routes are `/api/health` and
+  `/api/v1/translate`. It uses `@hono/node-server/vercel`'s `handle()` (the
   **Node.js** runtime adapter — `hono/vercel` is Edge-only and the cache uses
   `node:crypto`).
-- No `vercel.json` rewrite is used: Vercel's native filesystem routing maps
-  `/api/*` to the function directly.
+- `apps/api/vercel.json` rewrites `/api/(.*)` to `/api` so every `/api/*` path
+  (any depth) reaches the function. (A `[[...route]]` catch-all filename was
+  tried first but Vercel matched only a single path segment with it.)
 - `apps/api/public/index.html` is a small static landing page. With
   `"framework": null`, Vercel expects a static output directory; this satisfies
   it and gives `/` a friendly page that links to `/api/health`.
