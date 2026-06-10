@@ -1,5 +1,4 @@
 {
   "installCommand": "pnpm install --no-frozen-lockfile",
-  "buildCommand": "pnpm --filter @emoji/shared build",
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+  "buildCommand": "pnpm --filter @emoji/shared build"
 }

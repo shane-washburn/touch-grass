@@ -34,8 +34,8 @@ don't cold-sleep the way a free Render instance does.
    | `GEMINI_MODEL`                 | `gemini-2.5-flash`                     |
    | `CORS_ORIGIN`                  | your web URL (fill in after step 2)    |
 5. **Deploy**. Note the resulting URL, e.g. `https://emoji-api.vercel.app`.
-6. Sanity check: open `https://<your-api>.vercel.app/health` — it should return
-   `{ "ok": true, ... }`.
+6. Sanity check: open `https://<your-api>.vercel.app/api/health` — it should
+   return `{ "ok": true, ... }`. (The app is mounted under `/api`.)
 
 > You can temporarily set `CORS_ORIGIN` to `*` for first testing, then lock it
 > down to the real web URL once you have it.
@@ -52,7 +52,7 @@ don't cold-sleep the way a free Render instance does.
 4. **Environment Variables**:
    | Name                | Value                                |
    | ------------------- | ------------------------------------ |
-   | `VITE_API_BASE_URL` | your API URL from step 1 (no trailing slash), e.g. `https://emoji-api.vercel.app` |
+   | `VITE_API_BASE_URL` | your API URL from step 1 **with the `/api` suffix**, no trailing slash, e.g. `https://emoji-api.vercel.app/api` |
 5. **Deploy**. Note the web URL, e.g. `https://emoji-web.vercel.app`.
 
 ---
@@ -71,12 +71,15 @@ Open the web URL and translate something. Done.
 
 ## How it works
 
-- `apps/api/api/index.ts` wraps the shared Hono `app` with `hono/vercel`'s
-  `handle()`. `apps/api/vercel.json` rewrites every request to that function, so
-  the existing routes (`/health`, `/v1/translate`) work unchanged.
-- The function uses the **Node.js** runtime (the cache uses `node:crypto`).
+- `apps/api/api/[[...route]].ts` is a catch-all serverless function that mounts
+  the shared Hono `app` under `/api`, so production routes are `/api/health`
+  and `/api/v1/translate`. It uses `@hono/node-server/vercel`'s `handle()` (the
+  **Node.js** runtime adapter — `hono/vercel` is Edge-only and the cache uses
+  `node:crypto`).
+- No `vercel.json` rewrite is used: Vercel's native filesystem routing maps
+  `/api/*` to the function directly.
 - Local dev is unaffected: `pnpm dev` still runs the Node server via
-  `apps/api/src/index.ts`.
+  `apps/api/src/index.ts`, serving `/health` and `/v1/translate` directly.
 
 ## Notes & limits
 
