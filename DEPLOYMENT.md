@@ -80,6 +80,9 @@ Open the web URL and translate something. Done.
   `node:crypto`).
 - No `vercel.json` rewrite is used: Vercel's native filesystem routing maps
   `/api/*` to the function directly.
+- `apps/api/public/index.html` is a small static landing page. With
+  `"framework": null`, Vercel expects a static output directory; this satisfies
+  it and gives `/` a friendly page that links to `/api/health`.
 - Local dev is unaffected: `pnpm dev` still runs the Node server via
   `apps/api/src/index.ts`, serving `/health` and `/v1/translate` directly.
 
