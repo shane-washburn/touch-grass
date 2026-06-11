@@ -20,12 +20,12 @@ importers:
       '@ai-sdk/google':
         specifier: ^1.0.0
         version: 1.2.22(zod@3.25.76)
-      '@emoji/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@hono/node-server':
         specifier: ^1.13.1
         version: 1.19.14(hono@4.12.25)
+      '@scroll-goblin/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       ai:
         specifier: ^4.0.0
         version: 4.3.19(react@18.3.1)(zod@3.25.76)
@@ -54,19 +54,19 @@ importers:
 
   apps/web:
     dependencies:
-      '@emoji/module-emoji-translator':
+      '@scroll-goblin/module-emoji-translator':
         specifier: workspace:*
         version: link:../../packages/modules/emoji-translator
-      '@emoji/module-screaming-chicken':
+      '@scroll-goblin/module-screaming-chicken':
         specifier: workspace:*
         version: link:../../packages/modules/screaming-chicken
-      '@emoji/module-touch-grass':
+      '@scroll-goblin/module-touch-grass':
         specifier: workspace:*
         version: link:../../packages/modules/touch-grass
-      '@emoji/shared':
+      '@scroll-goblin/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@emoji/ui':
+      '@scroll-goblin/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@vercel/analytics':
@@ -112,10 +112,10 @@ importers:
 
   packages/modules/emoji-translator:
     dependencies:
-      '@emoji/shared':
+      '@scroll-goblin/shared':
         specifier: workspace:*
         version: link:../../shared
-      '@emoji/ui':
+      '@scroll-goblin/ui':
         specifier: workspace:*
         version: link:../../ui
       lucide-react:
@@ -137,7 +137,7 @@ importers:
 
   packages/modules/screaming-chicken:
     dependencies:
-      '@emoji/ui':
+      '@scroll-goblin/ui':
         specifier: workspace:*
         version: link:../../ui
       react:
@@ -153,7 +153,7 @@ importers:
 
   packages/modules/touch-grass:
     dependencies:
-      '@emoji/ui':
+      '@scroll-goblin/ui':
         specifier: workspace:*
         version: link:../../ui
       react:

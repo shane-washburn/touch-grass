@@ -1,7 +1,7 @@
-import type { ModuleManifest } from "@emoji/ui";
-import { manifest as emojiTranslator } from "@emoji/module-emoji-translator";
-import { manifest as touchGrass } from "@emoji/module-touch-grass";
-import { manifest as screamingChicken } from "@emoji/module-screaming-chicken";
+import type { ModuleManifest } from "@scroll-goblin/ui";
+import { manifest as emojiTranslator } from "@scroll-goblin/module-emoji-translator";
+import { manifest as touchGrass } from "@scroll-goblin/module-touch-grass";
+import { manifest as screamingChicken } from "@scroll-goblin/module-screaming-chicken";
 
 /**
  * The single source of truth for every module in the suite.

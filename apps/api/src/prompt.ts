@@ -1,4 +1,4 @@
-import { languageLabel, type TranslateRequest } from "@emoji/shared";
+import { languageLabel, type TranslateRequest } from "@scroll-goblin/shared";
 
 /**
  * Two prompt templates, one per direction. Both ask for the same structured

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Card } from "@emoji/ui";
+import { Card } from "@scroll-goblin/ui";
 
 /** Number of grass blades in the field. */
 const BLADE_COUNT = 110;

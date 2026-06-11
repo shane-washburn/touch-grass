@@ -1,5 +1,5 @@
 {
-  "name": "@emoji/web",
+  "name": "@scroll-goblin/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,11 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emoji/module-emoji-translator": "workspace:*",
-    "@emoji/module-screaming-chicken": "workspace:*",
-    "@emoji/module-touch-grass": "workspace:*",
-    "@emoji/shared": "workspace:*",
-    "@emoji/ui": "workspace:*",
+    "@scroll-goblin/module-emoji-translator": "workspace:*",
+    "@scroll-goblin/module-screaming-chicken": "workspace:*",
+    "@scroll-goblin/module-touch-grass": "workspace:*",
+    "@scroll-goblin/shared": "workspace:*",
+    "@scroll-goblin/ui": "workspace:*",
     "@vercel/analytics": "^2.0.1",
     "lucide-react": "^0.451.0",
     "react": "^18.3.1",

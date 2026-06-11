@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Card } from "@emoji/ui";
+import { Card } from "@scroll-goblin/ui";
 import { playPop, playScream, startWheeze, type Wheeze } from "./scream";
 
 /** SVG viewBox dimensions. */

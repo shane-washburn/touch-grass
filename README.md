@@ -28,11 +28,11 @@ scroll-goblin/
                     ┌─ Shell (apps/web) ────────────┐
   Landing page ──▶  │  module registry → lazy routes  │
                     └─────┬────────────────────────┘
-                          │ loads @emoji/module-* chunks on demand
+                          │ loads @scroll-goblin/module-* chunks on demand
                           ▼
   Module UI  --HTTP/JSON-->  API (Hono)  /api/<module-id>/...  -->  LLM (Gemini)
         |                          |
-        +---- @emoji/shared (Zod contract) ----+
+        +---- @scroll-goblin/shared (Zod contract) ----+
 ```
 
 - **Registry-driven:** the shell discovers modules only through
@@ -43,7 +43,7 @@ scroll-goblin/
 - **Namespaced API:** each module's backend routes mount at
   `/api/<module-id>/...` via the router registry in `apps/api/src/app.ts`.
   Modules can't collide, and per-module usage is easy to trace.
-- **Unified styling:** `@emoji/ui` owns the design tokens (Tailwind preset with
+- **Unified styling:** `@scroll-goblin/ui` owns the design tokens (Tailwind preset with
   the `brand-*` palette) and common components. Modules never hardcode one-off
   colors — restyle the suite in one place.
 - **Decoupled:** module UIs only know `VITE_API_BASE_URL` plus the shared
@@ -58,11 +58,11 @@ scroll-goblin/
 | Layer    | Choice |
 |----------|--------|
 | Shell    | React, TypeScript, Vite, React Router, Tailwind CSS, Lucide |
-| Modules  | One pnpm package each (`@emoji/module-*`), lazy-loaded source packages |
-| Design   | `@emoji/ui` — Tailwind preset (brand tokens) + shared components |
+| Modules  | One pnpm package each (`@scroll-goblin/module-*`), lazy-loaded source packages |
+| Design   | `@scroll-goblin/ui` — Tailwind preset (brand tokens) + shared components |
 | Backend  | Node, Hono, Vercel AI SDK (`ai`), Zod |
 | LLM      | Google Gemini (default, provider-agnostic) |
-| Contract | `@emoji/shared` (Zod) |
+| Contract | `@scroll-goblin/shared` (Zod) |
 | Tooling  | pnpm workspaces |
 
 ## Prerequisites
@@ -111,7 +111,7 @@ page and router pick it up automatically.
 
 ```
 packages/modules/my-game/
-├── package.json        # name: "@emoji/module-my-game", main: "./src/index.ts"
+├── package.json        # name: "@scroll-goblin/module-my-game", main: "./src/index.ts"
 ├── tsconfig.json       # extends ../../../tsconfig.base.json, jsx: react-jsx
 └── src/
     ├── index.ts        # export { manifest } from "./manifest";
@@ -123,7 +123,7 @@ packages/modules/my-game/
 
 ```ts
 // src/manifest.ts
-import type { ModuleManifest } from "@emoji/ui";
+import type { ModuleManifest } from "@scroll-goblin/ui";
 
 export const manifest: ModuleManifest = {
   id: "my-game",                  // also the API namespace, /api/my-game/...
@@ -138,7 +138,7 @@ export const manifest: ModuleManifest = {
 
 **3. Register it (two one-line changes):**
 
-- `apps/web/package.json` → add `"@emoji/module-my-game": "workspace:*"` to dependencies
+- `apps/web/package.json` → add `"@scroll-goblin/module-my-game": "workspace:*"` to dependencies
 - `apps/web/src/modules/registry.ts` → import the manifest and append it to `MODULES`
 
 Then `pnpm install`. Done — the landing page card and route exist.
@@ -153,7 +153,7 @@ Then `pnpm install`. Done — the landing page card and route exist.
 
 **Rules of the road**
 
-- Use `@emoji/ui` components and `brand-*` Tailwind tokens; don't invent
+- Use `@scroll-goblin/ui` components and `brand-*` Tailwind tokens; don't invent
   one-off colors.
 - Keep module state inside the module — no globals.
 - Frontend-only modules (no backend) are perfectly fine: Touch Grass is one.
@@ -185,7 +185,7 @@ and can be removed once no clients use it (see `apps/api/src/app.ts`).
 
 ## Swapping the LLM provider
 
-1. Install the provider SDK, e.g. `pnpm --filter @emoji/api add @ai-sdk/openai`
+1. Install the provider SDK, e.g. `pnpm --filter @scroll-goblin/api add @ai-sdk/openai`
 2. Uncomment its case in `apps/api/src/ai.ts`
 3. Set `AI_PROVIDER=openai` and the matching key in `apps/api/.env`
 

@@ -1,5 +1,5 @@
 {
-  "name": "@emoji/module-touch-grass",
+  "name": "@scroll-goblin/module-touch-grass",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@emoji/ui": "workspace:*"
+    "@scroll-goblin/ui": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.3.1"
