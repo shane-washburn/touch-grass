@@ -5,23 +5,31 @@ import { MODULES } from "../modules/registry";
 
 export default function Landing() {
   const visible = MODULES.filter((m) => m.status !== "hidden");
-  const tileColors = ["bg-brand-primary", "bg-brand-secondary", "bg-brand-warning"];
+  const tileColors = [
+    "bg-brand-primary",
+    "bg-brand-secondary",
+    "bg-brand-warning",
+  ];
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:py-12">
       <header className="mb-bento grid gap-bento sm:grid-cols-[1.2fr_0.8fr]">
         <div className="rounded-neobrutal border-thick border-brand-border bg-brand-primary p-5 shadow-neo-lg">
           <div className="mb-4 inline-flex items-center gap-2 rounded-neobrutal border-thin border-brand-border bg-brand-background px-3 py-1 text-xs font-bold uppercase shadow-neo-sm">
-          <Sparkles className="h-4 w-4" />
-          Scroll Goblin
+            <Sparkles className="h-4 w-4" />
+            Scroll Goblin
           </div>
           <h1 className="font-heading text-4xl uppercase leading-none text-brand-text sm:text-5xl">
-          Pick an app to launch
+            Choose your brainrot spell
           </h1>
         </div>
-        <p className="rounded-neobrutal border-thick border-brand-border bg-brand-surface p-5 text-sm font-bold leading-relaxed shadow-neo-lg">
-          A growing collection of mini apps, games, and activities.
-        </p>
+        <div className="mascot-boil rounded-neobrutal border-thick border-brand-border bg-brand-background p-3 shadow-neo-lg">
+          <img
+            src="/scroll-goblin-mascot.png"
+            alt="Scroll Goblin mascot"
+            className="relative z-10 h-full max-h-[260px] w-full object-contain"
+          />
+        </div>
       </header>
 
       <div className="grid gap-bento sm:grid-cols-2 lg:grid-cols-3">

@@ -28,3 +28,98 @@ select,
 textarea {
   font: inherit;
 }
+
+.mascot-boil {
+  position: relative;
+  display: grid;
+  min-height: 220px;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.mascot-boil img {
+  animation: mascot-boil-base 900ms steps(1, end) infinite;
+}
+
+.mascot-boil::before,
+.mascot-boil::after {
+  position: absolute;
+  inset: 12px;
+  z-index: 0;
+  content: "";
+  background-image: url("/scroll-goblin-mascot.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mascot-boil::before {
+  animation: mascot-boil-outline-a 900ms steps(1, end) infinite;
+  filter: contrast(1.3);
+  mix-blend-mode: multiply;
+}
+
+.mascot-boil::after {
+  animation: mascot-boil-outline-b 900ms steps(1, end) infinite;
+  filter: contrast(1.4) saturate(1.25);
+}
+
+.mascot-boil:hover img,
+.mascot-boil:hover::before,
+.mascot-boil:hover::after {
+  animation-duration: 180ms;
+}
+
+@keyframes mascot-boil-base {
+  0%,
+  100% {
+    transform: translate(0, 0) skew(0deg);
+  }
+  33% {
+    transform: translate(2px, -2px) skew(-1deg, 0.5deg);
+  }
+  66% {
+    transform: translate(-2px, 1px) skew(0.75deg, -1deg);
+  }
+}
+
+@keyframes mascot-boil-outline-a {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+  33% {
+    opacity: 0.42;
+    transform: translate(5px, -3px) skew(-2deg, 1deg);
+    clip-path: polygon(0 0, 100% 2%, 96% 48%, 100% 100%, 0 96%, 3% 45%);
+  }
+  66% {
+    opacity: 0.32;
+    transform: translate(-4px, 3px) skew(1deg, -2deg);
+    clip-path: polygon(3% 3%, 98% 0, 100% 58%, 94% 100%, 1% 98%, 0 35%);
+  }
+}
+
+@keyframes mascot-boil-outline-b {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+  33% {
+    opacity: 0.28;
+    transform: translate(-3px, 4px) rotate(-1deg);
+    clip-path: polygon(0 6%, 94% 0, 100% 42%, 98% 100%, 4% 95%, 2% 55%);
+  }
+  66% {
+    opacity: 0.36;
+    transform: translate(4px, -4px) rotate(1deg);
+    clip-path: polygon(5% 0, 100% 5%, 96% 50%, 100% 94%, 0 100%, 3% 38%);
+  }
+}
