@@ -96,14 +96,17 @@ function applyMeta(html: string, page: Page): string {
   const title = escapeHtml(pageTitle(page.title));
   const description = escapeHtml(page.description);
   const url = `${SITE_URL}${page.path === "/" ? "/" : page.path}`;
-  return html
+  let out = html
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>`)
     .replaceAll(SITE_DESCRIPTION, description)
     .replace(/(rel="canonical" href=")[^"]*(")/, `$1${url}$2`)
     .replace(/(property="og:url"[\s\S]*?content=")[^"]*(")/, `$1${url}$2`)
     .replace(/(property="og:title"[\s\S]*?content=")[^"]*(")/, `$1${title}$2`)
-    .replace(/(name="twitter:title"[\s\S]*?content=")[^"]*(")/, `$1${title}$2`)
-    .replace(
+    .replace(/(name="twitter:title"[\s\S]*?content=")[^"]*(")/, `$1${title}$2`);
+
+  // Per-app pages carry WebApplication schema; the home page keeps WebSite.
+  if (page.path !== "/") {
+    out = out.replace(
       "</head>",
       `<script type="application/ld+json">${JSON.stringify({
         "@context": "https://schema.org",
@@ -116,16 +119,69 @@ function applyMeta(html: string, page: Page): string {
         isPartOf: { "@type": "WebSite", name: SITE_NAME, url: `${SITE_URL}/` },
       })}</script></head>`
     );
+  }
+  return out;
 }
 
-for (const page of pages.filter((p) => p.path !== "/")) {
+/** A crawlable link list of every app, used for internal linking. */
+function appList(exclude?: string): string {
+  return modulePages
+    .filter((m) => m.path !== exclude)
+    .map(
+      (m) =>
+        `<li><a href="${m.path}"><strong>${escapeHtml(
+          m.title
+        )}</strong> \u2014 ${escapeHtml(m.description)}</a></li>`
+    )
+    .join("");
+}
+
+/**
+ * Readable HTML injected into #root. React's createRoot() replaces it on
+ * load, so users get the live app while no-JS crawlers and LLMs keep this
+ * static content (and follow its internal links to discover every page).
+ */
+function renderBody(page: Page): string {
+  if (page.path === "/") {
+    return (
+      `<main class="mx-auto max-w-4xl px-4 py-8">` +
+      `<h1 class="font-heading text-4xl uppercase">${escapeHtml(SITE_NAME)}</h1>` +
+      `<p class="mt-3 font-bold">${escapeHtml(SITE_DESCRIPTION)}</p>` +
+      `<h2 class="mt-6 font-heading text-2xl uppercase">Apps</h2>` +
+      `<ul>${appList()}` +
+      `<li><a href="/leaderboard"><strong>Leaderboard</strong> \u2014 ` +
+      `${escapeHtml(STATIC_PAGES[1].description)}</a></li></ul>` +
+      `</main>`
+    );
+  }
+  return (
+    `<main class="mx-auto max-w-4xl px-4 py-8">` +
+    `<h1 class="font-heading text-4xl uppercase">${escapeHtml(page.title)}</h1>` +
+    `<p class="mt-3 font-bold">${escapeHtml(page.description)}</p>` +
+    `<p class="mt-4"><a href="/">${escapeHtml(SITE_NAME)} home</a></p>` +
+    `<h2 class="mt-6 font-heading text-2xl uppercase">More apps</h2>` +
+    `<ul>${appList(page.path)}</ul>` +
+    `</main>`
+  );
+}
+
+function prerender(page: Page): string {
+  return applyMeta(shell, page).replace(
+    '<div id="root"></div>',
+    `<div id="root">${renderBody(page)}</div>`
+  );
+}
+
+for (const page of pages) {
+  if (page.path === "/") {
+    writeFileSync(join(dist, "index.html"), prerender(page));
+    continue;
+  }
   const dir = join(dist, ...page.path.split("/").filter(Boolean));
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, "index.html"), applyMeta(shell, page));
+  writeFileSync(join(dir, "index.html"), prerender(page));
 }
 
 console.log(
-  `[generate-seo] wrote robots.txt, sitemap.xml, llms.txt and ${
-    pages.length - 1
-  } prerendered routes to dist/`
+  `[generate-seo] wrote robots.txt, sitemap.xml, llms.txt and ${pages.length} prerendered pages (incl. home) to dist/`
 );
