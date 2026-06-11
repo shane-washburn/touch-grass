@@ -11,11 +11,24 @@ export default function Landing() {
     const pick = visible[Math.floor(Math.random() * visible.length)];
     if (pick) navigate(pick.path);
   };
-  const tileColors = [
+  const palette = [
     "bg-brand-primary",
     "bg-brand-secondary",
     "bg-brand-warning",
+    "bg-brand-pink",
+    "bg-brand-orange",
+    "bg-brand-purple",
   ];
+  // Assign colors so no card matches its left neighbor (index - 1) or the
+  // card above it in 2-col (index - 2) or 3-col (index - 3) layouts.
+  const tileColors: string[] = [];
+  for (let i = 0; i < visible.length; i++) {
+    const banned = new Set(
+      [tileColors[i - 1], tileColors[i - 2], tileColors[i - 3]].filter(Boolean)
+    );
+    const candidates = palette.filter((c) => !banned.has(c));
+    tileColors.push(candidates[i % candidates.length]);
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:py-12">
