@@ -2,8 +2,24 @@
 
 **Scroll Goblin** (`scroll-goblin`) is a growing collection of mini apps, games,
 and activities ("**modules**") served
-from a single landing page. Current modules: **Emoji Translator** 😀 and
-**Touch Grass** 🌱.
+from a single landing page.
+
+**Live:** [scrollgoblin.fun](https://scrollgoblin.fun) (frontend) ·
+[scrollgoblinapi.vercel.app/api](https://scrollgoblinapi.vercel.app/api) (backend)
+
+Current modules:
+
+| Module | What it does |
+|--------|--------------|
+| 😀 **Emoji Translator** | Translate between human language and emoji in both directions, powered by an LLM. |
+| 🌱 **Touch Grass** | Finally, a way to touch grass without going outside. Brush it, pat it, pluck it — it reacts. |
+| 🐔 **Screaming Chicken** | A rubber chicken you can squeeze. Hold to compress, release to hear it scream. |
+| 🔮 **Commune with God** | Ask the divine anything. A benevolent, non-denominational AI oracle answers with kindness. |
+| 🥔 **Potato Painter** | Grab a spud, drag it onto the canvas, and stamp masterpieces. Every potato grows back different. |
+
+There's also a suite-wide **Leaderboard** (`/leaderboard`) showing combined
+interaction totals and per-module visits across all users, backed by Upstash
+Redis.
 
 Built as a **decoupled monorepo** so the shell, backend, modules, and LLM
 provider are each independently swappable — and so the suite scales
@@ -19,7 +35,10 @@ scroll-goblin/
     ├── ui/                   # Design system: Tailwind preset, Card/Button, ModuleManifest type
     └── modules/
         ├── emoji-translator/ # One package per module (UI + manifest + API client)
-        └── touch-grass/
+        ├── touch-grass/
+        ├── screaming-chicken/
+        ├── commune-with-god/
+        └── potato-painter/
 ```
 
 ## Architecture
@@ -52,6 +71,9 @@ scroll-goblin/
   **Google Gemini**; switch via `AI_PROVIDER` env (see `apps/api/src/ai.ts`).
 - **Secure:** LLM API keys live only in the backend, never in the browser.
 - **Cached:** identical LLM requests are served from an in-memory cache.
+- **Stats:** modules report interactions via the batched tracker in
+  `@scroll-goblin/ui` (`trackStat`); the API aggregates them in Upstash Redis
+  and serves the leaderboard at `/api/stats/v1/leaderboard`.
 
 ## Tech Stack
 
@@ -62,6 +84,7 @@ scroll-goblin/
 | Design   | `@scroll-goblin/ui` — Tailwind preset (brand tokens) + shared components |
 | Backend  | Node, Hono, Vercel AI SDK (`ai`), Zod |
 | LLM      | Google Gemini (default, provider-agnostic) |
+| Stats    | Upstash Redis (leaderboard counters) |
 | Contract | `@scroll-goblin/shared` (Zod) |
 | Tooling  | pnpm workspaces |
 

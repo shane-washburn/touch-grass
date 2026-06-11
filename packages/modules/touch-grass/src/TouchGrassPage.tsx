@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Card, ShareButton, consumeShareSnapshot } from "@scroll-goblin/ui";
+import {
+  Card,
+  ShareButton,
+  consumeShareSnapshot,
+  trackStat,
+} from "@scroll-goblin/ui";
 
 /** Number of grass blades in the field. */
 const BLADE_COUNT = 110;
@@ -307,9 +312,11 @@ export default function TouchGrassPage() {
     p.active = true;
     if (modeRef.current === "water") {
       setWaters((w) => w + 1);
+      trackStat(MODULE_ID, "waters");
       setMessage(MESSAGES.water);
     } else {
       setTouches((t) => t + 1);
+      trackStat(MODULE_ID, "touches");
       setMessage(MESSAGES.pat);
     }
   };
@@ -346,6 +353,7 @@ export default function TouchGrassPage() {
     blade.plucked = true;
     blade.regrowAt = performance.now() + REGROW_MS;
     setPlucks((n) => n + 1);
+    trackStat(MODULE_ID, "plucks");
     setMessage(MESSAGES.pluck);
 
     // A little leaf pops out where the blade was plucked.

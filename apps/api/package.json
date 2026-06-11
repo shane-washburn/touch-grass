@@ -12,6 +12,7 @@
     "@ai-sdk/google": "^1.0.0",
     "@scroll-goblin/shared": "workspace:*",
     "@hono/node-server": "^1.13.1",
+    "@upstash/redis": "^1.34.3",
     "ai": "^4.0.0",
     "dotenv": "^16.4.5",
     "hono": "^4.6.3",

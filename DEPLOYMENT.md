@@ -35,7 +35,9 @@ don't cold-sleep the way a free Render instance does.
    | `AI_PROVIDER`                  | `google`                               |
    | `GEMINI_MODEL`                 | `gemini-2.5-flash`                     |
    | `CORS_ORIGIN`                  | your web URL (fill in after step 2)    |
-5. **Deploy**. Note the resulting URL, e.g. `https://emoji-api.vercel.app`.
+   | `UPSTASH_REDIS_REST_URL`       | from console.upstash.com (leaderboard) |
+   | `UPSTASH_REDIS_REST_TOKEN`     | from console.upstash.com (leaderboard) |
+5. **Deploy**. Note the resulting URL, e.g. `https://scrollgoblinapi.vercel.app`.
 6. Sanity check: open `https://<your-api>.vercel.app/api/health` — it should
    return `{ "ok": true, ... }`. (The app is mounted under `/api`.)
 
@@ -54,8 +56,8 @@ don't cold-sleep the way a free Render instance does.
 4. **Environment Variables**:
    | Name                | Value                                |
    | ------------------- | ------------------------------------ |
-   | `VITE_API_BASE_URL` | your API URL from step 1 **with the `/api` suffix**, no trailing slash, e.g. `https://emoji-api.vercel.app/api` |
-5. **Deploy**. Note the web URL, e.g. `https://emoji-web.vercel.app`.
+   | `VITE_API_BASE_URL` | your API URL from step 1 **with the `/api` suffix**, no trailing slash, e.g. `https://scrollgoblinapi.vercel.app/api` |
+5. **Deploy**. Note the web URL, e.g. `https://scrollgoblin.fun`.
 
 ---
 
@@ -63,7 +65,7 @@ don't cold-sleep the way a free Render instance does.
 
 1. Go back to the **API** project → Environment Variables.
 2. Set `CORS_ORIGIN` to the exact web URL from step 2
-   (e.g. `https://emoji-web.vercel.app`). Multiple origins can be
+   (e.g. `https://scrollgoblin.fun`). Multiple origins can be
    comma-separated.
 3. **Redeploy** the API so the new CORS value takes effect.
 

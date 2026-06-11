@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { getModelId } from "./ai.js";
 import { emojiTranslatorRouter } from "./modules/emoji-translator.js";
 import { communeWithGodRouter } from "./modules/commune-with-god.js";
+import { statsRouter } from "./modules/stats.js";
 
 /**
  * The Hono application, defined independently of any runtime.
@@ -31,6 +32,7 @@ app.get("/health", (c) => c.json({ ok: true, model: getModelId() }));
 const moduleRouters: Record<string, Hono> = {
   "emoji-translator": emojiTranslatorRouter,
   "commune-with-god": communeWithGodRouter,
+  stats: statsRouter,
 };
 
 for (const [id, router] of Object.entries(moduleRouters)) {
