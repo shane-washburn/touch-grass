@@ -94,6 +94,9 @@ importers:
         specifier: ^6.26.2
         version: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.19.20
       '@types/react':
         specifier: ^18.3.11
         version: 18.3.31
@@ -112,6 +115,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.13
         version: 3.4.19(tsx@4.22.4)
+      tsx:
+        specifier: ^4.19.2
+        version: 4.22.4
       typescript:
         specifier: ^5.6.3
         version: 5.9.3

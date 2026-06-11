@@ -6,6 +6,8 @@ import { trackVisit } from "@scroll-goblin/ui";
 import { MODULES } from "./modules/registry";
 import Landing from "./pages/Landing";
 import Leaderboard from "./pages/Leaderboard";
+import NotFound from "./pages/NotFound";
+import RouteMeta from "./seo/RouteMeta";
 
 /**
  * The shell: owns global chrome (nav, background, footer) and routing.
@@ -70,12 +72,14 @@ export default function App() {
           }
         >
           <VisitTracker />
+          <RouteMeta />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             {moduleRoutes.map((m) => (
               <Route key={m.id} path={`${m.path}/*`} element={<m.Component />} />
             ))}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </main>
