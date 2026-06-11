@@ -1,6 +1,7 @@
 import type { ModuleManifest } from "@emoji/ui";
 import { manifest as emojiTranslator } from "@emoji/module-emoji-translator";
 import { manifest as touchGrass } from "@emoji/module-touch-grass";
+import { manifest as screamingChicken } from "@emoji/module-screaming-chicken";
 
 /**
  * The single source of truth for every module in the suite.
@@ -9,4 +10,8 @@ import { manifest as touchGrass } from "@emoji/module-touch-grass";
  * ModuleManifest, and append it here. The landing page and router pick it up
  * automatically — no other shell changes required.
  */
-export const MODULES: ModuleManifest[] = [emojiTranslator, touchGrass];
+export const MODULES: ModuleManifest[] = [
+  emojiTranslator,
+  touchGrass,
+  screamingChicken,
+];
