@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import {
   TranslateResponseSchema,
   type TranslateRequest,
@@ -8,15 +9,18 @@ const API_BASE_URL = (
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8787"
 ).replace(/\/+$/, "");
 
+/** This module's API namespace on the suite backend. */
+const MODULE_API = `${API_BASE_URL}/emoji-translator`;
+
 /**
- * The ONLY place the frontend knows about the backend: a single typed client
+ * The ONLY place this module knows about the backend: a single typed client
  * that speaks the shared contract. Swap the backend by changing VITE_API_BASE_URL.
  */
 export async function translate(
   req: TranslateRequest,
   signal?: AbortSignal
 ): Promise<TranslateResponse> {
-  const res = await fetch(`${API_BASE_URL}/v1/translate`, {
+  const res = await fetch(`${MODULE_API}/v1/translate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(req),
