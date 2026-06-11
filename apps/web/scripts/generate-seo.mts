@@ -15,7 +15,9 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { MODULES } from "../src/modules/registry";
 import {
+  SITE_ABOUT,
   SITE_DESCRIPTION,
+  SITE_FACTS,
   SITE_NAME,
   SITE_URL,
   STATIC_PAGES,
@@ -73,6 +75,12 @@ writeFileSync(
     `# ${SITE_NAME}`,
     "",
     `> ${SITE_DESCRIPTION}`,
+    "",
+    SITE_ABOUT,
+    "",
+    "## Good to know",
+    "",
+    ...SITE_FACTS.map((f) => `- ${f}`),
     "",
     "## Apps",
     "",
@@ -147,6 +155,9 @@ function renderBody(page: Page): string {
       `<main class="mx-auto max-w-4xl px-4 py-8">` +
       `<h1 class="font-heading text-4xl uppercase">${escapeHtml(SITE_NAME)}</h1>` +
       `<p class="mt-3 font-bold">${escapeHtml(SITE_DESCRIPTION)}</p>` +
+      `<p class="mt-3">${escapeHtml(SITE_ABOUT)}</p>` +
+      `<h2 class="mt-6 font-heading text-2xl uppercase">Good to know</h2>` +
+      `<ul>${SITE_FACTS.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul>` +
       `<h2 class="mt-6 font-heading text-2xl uppercase">Apps</h2>` +
       `<ul>${appList()}` +
       `<li><a href="/leaderboard"><strong>Leaderboard</strong> \u2014 ` +
