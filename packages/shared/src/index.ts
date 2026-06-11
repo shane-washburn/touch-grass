@@ -136,6 +136,10 @@ export const STAT_METRICS: Record<string, Record<string, string>> = {
   "emoji-translator": {
     translations: "Emoji translations",
   },
+  "slug-fencing": {
+    hits: "Slug hits landed",
+    lunges: "Lunges thrown",
+  },
 };
 
 /** Reserved metric name for page visits; valid for every module. */

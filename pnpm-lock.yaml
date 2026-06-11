@@ -69,6 +69,9 @@ importers:
       '@scroll-goblin/module-screaming-chicken':
         specifier: workspace:*
         version: link:../../packages/modules/screaming-chicken
+      '@scroll-goblin/module-slug-fencing':
+        specifier: workspace:*
+        version: link:../../packages/modules/slug-fencing
       '@scroll-goblin/module-touch-grass':
         specifier: workspace:*
         version: link:../../packages/modules/touch-grass
@@ -192,6 +195,22 @@ importers:
         version: 5.9.3
 
   packages/modules/screaming-chicken:
+    dependencies:
+      '@scroll-goblin/ui':
+        specifier: workspace:*
+        version: link:../../ui
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.11
+        version: 18.3.31
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
+  packages/modules/slug-fencing:
     dependencies:
       '@scroll-goblin/ui':
         specifier: workspace:*

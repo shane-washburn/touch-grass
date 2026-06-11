@@ -13,6 +13,7 @@
     "@scroll-goblin/module-emoji-translator": "workspace:*",
     "@scroll-goblin/module-potato-painter": "workspace:*",
     "@scroll-goblin/module-screaming-chicken": "workspace:*",
+    "@scroll-goblin/module-slug-fencing": "workspace:*",
     "@scroll-goblin/module-touch-grass": "workspace:*",
     "@scroll-goblin/shared": "workspace:*",
     "@scroll-goblin/ui": "workspace:*",
