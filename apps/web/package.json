@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@emoji/module-emoji-translator": "workspace:*",
+    "@emoji/module-touch-grass": "workspace:*",
     "@emoji/shared": "workspace:*",
     "@emoji/ui": "workspace:*",
     "@vercel/analytics": "^2.0.1",

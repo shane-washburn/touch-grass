@@ -57,6 +57,9 @@ importers:
       '@emoji/module-emoji-translator':
         specifier: workspace:*
         version: link:../../packages/modules/emoji-translator
+      '@emoji/module-touch-grass':
+        specifier: workspace:*
+        version: link:../../packages/modules/touch-grass
       '@emoji/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -128,6 +131,22 @@ importers:
       vite:
         specifier: ^5.4.8
         version: 5.4.21(@types/node@22.19.20)
+
+  packages/modules/touch-grass:
+    dependencies:
+      '@emoji/ui':
+        specifier: workspace:*
+        version: link:../../ui
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.11
+        version: 18.3.31
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
 
   packages/shared:
     dependencies:
