@@ -1,5 +1,5 @@
 {
-  "name": "@scroll-goblin/module-screaming-chicken",
+  "name": "@scroll-goblin/module-commune-with-god",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,13 +9,16 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@scroll-goblin/ui": "workspace:*"
+    "@scroll-goblin/shared": "workspace:*",
+    "@scroll-goblin/ui": "workspace:*",
+    "lucide-react": "^0.451.0"
   },
   "peerDependencies": {
     "react": "^18.3.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.11",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vite": "^5.4.8"
   }
 }

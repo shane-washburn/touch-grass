@@ -1,5 +1,5 @@
 {
-  "name": "@emoji/api",
+  "name": "@scroll-goblin/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^1.0.0",
-    "@emoji/shared": "workspace:*",
+    "@scroll-goblin/shared": "workspace:*",
     "@hono/node-server": "^1.13.1",
     "ai": "^4.0.0",
     "dotenv": "^16.4.5",

@@ -74,6 +74,37 @@ export const TranslateResponseSchema = z.object({
 });
 export type TranslateResponse = z.infer<typeof TranslateResponseSchema>;
 
+/* ------------------------------------------------------------------ */
+/* Commune with God — AI magic 8-ball contract                         */
+/* ------------------------------------------------------------------ */
+
+export const CommuneRequestSchema = z.object({
+  /** The question the seeker asks the divine. */
+  question: z
+    .string()
+    .min(1, "Ask something, even a whisper")
+    .max(500, "The divine prefers concise questions"),
+});
+export type CommuneRequest = z.infer<typeof CommuneRequestSchema>;
+
+/** Structured divine answer the LLM is asked to return. */
+export const DivineAnswerSchema = z.object({
+  /** Short magic-8-ball-style verdict, e.g. "Yes, and sooner than you think." */
+  verdict: z.string(),
+  /** A few sentences of warm, supportive, non-denominational guidance. */
+  message: z.string(),
+  /** A one-line parting blessing. */
+  blessing: z.string(),
+});
+export type DivineAnswer = z.infer<typeof DivineAnswerSchema>;
+
+export const CommuneResponseSchema = z.object({
+  result: DivineAnswerSchema,
+  /** Echoes the model used, for transparency / debugging. */
+  model: z.string(),
+});
+export type CommuneResponse = z.infer<typeof CommuneResponseSchema>;
+
 export const ErrorResponseSchema = z.object({
   error: z.string(),
   details: z.unknown().optional(),

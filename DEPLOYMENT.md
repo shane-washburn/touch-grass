@@ -23,7 +23,7 @@ don't cold-sleep the way a free Render instance does.
 1. In Vercel: **Add New… → Project**, import this repo.
 2. **Root Directory**: set to `apps/api`.
    - Enable **"Include source files outside of the Root Directory in the Build
-     Step"** (needed so it can build the `@emoji/shared` workspace package).
+     Step"** (needed so it can build the `@scroll-goblin/shared` workspace package).
 3. **Framework Preset**: **Other** — do NOT let it pick "Hono". Vercel
    auto-detects Hono and would build `src/app.ts` as a broken function at `/`.
    `apps/api/vercel.json` sets `"framework": null` to prevent this, but set the

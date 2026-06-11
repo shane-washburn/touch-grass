@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
 import {
-  TranslateResponseSchema,
-  type TranslateRequest,
-  type TranslateResponse,
+  CommuneResponseSchema,
+  type CommuneRequest,
+  type CommuneResponse,
 } from "@scroll-goblin/shared";
 
 const API_BASE_URL = (
@@ -10,17 +10,17 @@ const API_BASE_URL = (
 ).replace(/\/+$/, "");
 
 /** This module's API namespace on the suite backend. */
-const MODULE_API = `${API_BASE_URL}/emoji-translator`;
+const MODULE_API = `${API_BASE_URL}/commune-with-god`;
 
 /**
  * The ONLY place this module knows about the backend: a single typed client
  * that speaks the shared contract. Swap the backend by changing VITE_API_BASE_URL.
  */
-export async function translate(
-  req: TranslateRequest,
+export async function askTheDivine(
+  req: CommuneRequest,
   signal?: AbortSignal
-): Promise<TranslateResponse> {
-  const res = await fetch(`${MODULE_API}/v1/translate`, {
+): Promise<CommuneResponse> {
+  const res = await fetch(`${MODULE_API}/v1/ask`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(req),
@@ -37,5 +37,5 @@ export async function translate(
   }
 
   // Validate the response against the shared contract too — defensive decoupling.
-  return TranslateResponseSchema.parse(data);
+  return CommuneResponseSchema.parse(data);
 }

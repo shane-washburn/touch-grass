@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
-import { Card } from "@emoji/ui";
+import { Card } from "@scroll-goblin/ui";
 import { MODULES } from "../modules/registry";
 
 export default function Landing() {

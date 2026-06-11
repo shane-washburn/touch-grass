@@ -5,7 +5,7 @@ import {
   TranslationResultSchema,
   type TranslateResponse,
   type TranslationResult,
-} from "@emoji/shared";
+} from "@scroll-goblin/shared";
 import { getModel, getModelId } from "../ai.js";
 import { buildPrompt } from "../prompt.js";
 import { cacheKey, getCached, setCached } from "../cache.js";

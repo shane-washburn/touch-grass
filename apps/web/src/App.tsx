@@ -23,7 +23,7 @@ export default function App() {
             to="/"
             className="font-heading text-sm uppercase text-brand-text transition hover:bg-brand-warning"
           >
-            🧩 Scroll Goblin
+            Scroll Goblin
           </Link>
           <Link
             to="/"

@@ -20,13 +20,13 @@ export function getModel(): LanguageModel {
       return google(model);
     }
 
-    // To enable, run: pnpm --filter @emoji/api add @ai-sdk/openai
+    // To enable, run: pnpm --filter @scroll-goblin/api add @ai-sdk/openai
     // case "openai": {
     //   const { openai } = require("@ai-sdk/openai");
     //   return openai(process.env.OPENAI_MODEL ?? "gpt-4o-mini");
     // }
 
-    // To enable, run: pnpm --filter @emoji/api add @ai-sdk/anthropic
+    // To enable, run: pnpm --filter @scroll-goblin/api add @ai-sdk/anthropic
     // case "anthropic": {
     //   const { anthropic } = require("@ai-sdk/anthropic");
     //   return anthropic(process.env.ANTHROPIC_MODEL ?? "claude-3-5-haiku-latest");

@@ -1,5 +1,5 @@
 {
-  "name": "@emoji/module-emoji-translator",
+  "name": "@scroll-goblin/module-emoji-translator",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,8 +9,8 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@emoji/shared": "workspace:*",
-    "@emoji/ui": "workspace:*",
+    "@scroll-goblin/shared": "workspace:*",
+    "@scroll-goblin/ui": "workspace:*",
     "lucide-react": "^0.451.0"
   },
   "peerDependencies": {

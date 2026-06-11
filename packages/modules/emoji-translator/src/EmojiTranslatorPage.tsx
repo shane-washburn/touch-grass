@@ -12,8 +12,8 @@ import {
   type Direction,
   type LanguageCode,
   type TranslationResult,
-} from "@emoji/shared";
-import { Card } from "@emoji/ui";
+} from "@scroll-goblin/shared";
+import { Card } from "@scroll-goblin/ui";
 import { translate } from "./api";
 
 export default function EmojiTranslatorPage() {

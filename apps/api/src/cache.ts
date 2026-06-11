@@ -1,4 +1,4 @@
-import type { TranslateRequest, TranslateResponse } from "@emoji/shared";
+import type { TranslateRequest, TranslateResponse } from "@scroll-goblin/shared";
 
 /**
  * Minimal in-memory LRU-ish cache for identical requests.

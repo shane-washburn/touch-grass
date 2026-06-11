@@ -1,6 +1,6 @@
 {
   "installCommand": "pnpm install --no-frozen-lockfile",
-  "buildCommand": "pnpm --filter @emoji/shared build && pnpm --filter @emoji/web build",
+  "buildCommand": "pnpm --filter @scroll-goblin/shared build && pnpm --filter @scroll-goblin/web build",
   "outputDirectory": "dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

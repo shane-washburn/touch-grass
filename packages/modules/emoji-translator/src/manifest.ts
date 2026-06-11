@@ -1,4 +1,4 @@
-import type { ModuleManifest } from "@emoji/ui";
+import type { ModuleManifest } from "@scroll-goblin/ui";
 
 export const manifest: ModuleManifest = {
   id: "emoji-translator",
