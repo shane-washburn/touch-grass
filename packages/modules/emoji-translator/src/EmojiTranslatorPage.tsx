@@ -13,7 +13,12 @@ import {
   type LanguageCode,
   type TranslationResult,
 } from "@scroll-goblin/shared";
-import { Card, ShareButton, consumeShareSnapshot } from "@scroll-goblin/ui";
+import {
+  Card,
+  ShareButton,
+  consumeShareSnapshot,
+  trackStat,
+} from "@scroll-goblin/ui";
 import { translate } from "./api";
 
 /** State captured in a shareable link. Bump SHARE_VERSION on shape changes. */
@@ -73,6 +78,7 @@ export default function EmojiTranslatorPage() {
       });
       setResult(res.result);
       setCached(res.cached);
+      trackStat(MODULE_ID, "translations");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {

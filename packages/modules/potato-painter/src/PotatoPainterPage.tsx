@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Card, ShareButton, consumeShareSnapshot } from "@scroll-goblin/ui";
+import {
+  Card,
+  ShareButton,
+  consumeShareSnapshot,
+  trackStat,
+} from "@scroll-goblin/ui";
 import {
   VARIETIES,
   makePotato,
@@ -185,6 +190,7 @@ export default function PotatoPainterPage() {
         ny: y / rect.height,
       });
       setStampCount((n) => n + 1);
+      trackStat(MODULE_ID, "stamps");
       return true;
     },
     []

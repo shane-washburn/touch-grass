@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Card, ShareButton, consumeShareSnapshot } from "@scroll-goblin/ui";
+import {
+  Card,
+  ShareButton,
+  consumeShareSnapshot,
+  trackStat,
+} from "@scroll-goblin/ui";
 import { playPop, playScream, startWheeze, type Wheeze } from "./scream";
 
 /** State captured in a shareable link. Bump SHARE_VERSION on shape changes. */
@@ -213,6 +218,7 @@ export default function ScreamingChickenPage() {
     wheeze.current?.stop();
     wheeze.current = startWheeze();
     setSqueezes((n) => n + 1);
+    trackStat(MODULE_ID, "squeezes");
     setMessage(MESSAGES.squeezeLight);
   };
 
@@ -269,6 +275,7 @@ export default function ScreamingChickenPage() {
 
     playPop();
     setEggs((n) => n + 1);
+    trackStat(MODULE_ID, "eggs");
   };
 
   const release = () => {
@@ -287,6 +294,7 @@ export default function ScreamingChickenPage() {
       const ms = playScream(s.deepest);
       s.screamUntil = performance.now() + ms;
       setScreams((n) => n + 1);
+      trackStat(MODULE_ID, "screams");
       setRecord((r) => Math.max(r, Math.round(s.deepest * 100)));
       setMessage(
         laidEgg

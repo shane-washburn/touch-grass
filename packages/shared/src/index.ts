@@ -105,6 +105,77 @@ export const CommuneResponseSchema = z.object({
 });
 export type CommuneResponse = z.infer<typeof CommuneResponseSchema>;
 
+/* ------------------------------------------------------------------ */
+/* Stats — suite-wide interaction counters & leaderboard contract       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Allowlist of every metric a module may report, with display labels for the
+ * leaderboard. The API rejects anything not listed here, so a misbehaving
+ * client can't create arbitrary Redis keys.
+ *
+ * `visits` is implicit for every module and tracked by the shell.
+ */
+export const STAT_METRICS: Record<string, Record<string, string>> = {
+  "touch-grass": {
+    touches: "Grass touches",
+    plucks: "Blades of grass plucked",
+    waters: "Waterings poured",
+  },
+  "screaming-chicken": {
+    squeezes: "Chicken squeezes",
+    screams: "Screams unleashed",
+    eggs: "Eggs laid",
+  },
+  "potato-painter": {
+    stamps: "Potatoes stamped",
+  },
+  "commune-with-god": {
+    answers: "Answers from God",
+  },
+  "emoji-translator": {
+    translations: "Emoji translations",
+  },
+};
+
+/** Reserved metric name for page visits; valid for every module. */
+export const VISITS_METRIC = "visits";
+
+export function isValidStat(module: string, metric: string): boolean {
+  if (metric === VISITS_METRIC) return module in STAT_METRICS;
+  return Boolean(STAT_METRICS[module]?.[metric]);
+}
+
+/** One batched counter increment reported by a client. */
+export const StatEventSchema = z.object({
+  module: z.string().min(1).max(64),
+  metric: z.string().min(1).max(64),
+  /** Clamped server-side; batching keeps Redis command usage low. */
+  count: z.number().int().min(1).max(1000),
+});
+export type StatEvent = z.infer<typeof StatEventSchema>;
+
+export const StatsTrackRequestSchema = z.object({
+  events: z.array(StatEventSchema).min(1).max(50),
+});
+export type StatsTrackRequest = z.infer<typeof StatsTrackRequestSchema>;
+
+/** Per-module totals returned by the leaderboard endpoint. */
+export const ModuleStatsSchema = z.object({
+  visits: z.number(),
+  /** metric name -> total, for metrics listed in STAT_METRICS. */
+  metrics: z.record(z.number()),
+});
+export type ModuleStats = z.infer<typeof ModuleStatsSchema>;
+
+export const LeaderboardResponseSchema = z.object({
+  /** module id -> stats. */
+  modules: z.record(ModuleStatsSchema),
+  /** False when the API has no Redis configured (stats are zeros). */
+  live: z.boolean(),
+});
+export type LeaderboardResponse = z.infer<typeof LeaderboardResponseSchema>;
+
 export const ErrorResponseSchema = z.object({
   error: z.string(),
   details: z.unknown().optional(),

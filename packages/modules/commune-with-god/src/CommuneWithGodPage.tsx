@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Loader2, Send, Sparkles, Heart } from "lucide-react";
 import { type DivineAnswer } from "@scroll-goblin/shared";
-import { Card, ShareButton, consumeShareSnapshot } from "@scroll-goblin/ui";
+import {
+  Card,
+  ShareButton,
+  consumeShareSnapshot,
+  trackStat,
+} from "@scroll-goblin/ui";
 import { askTheDivine } from "./api";
 
 /** State captured in a shareable link. Bump SHARE_VERSION on shape changes. */
@@ -50,6 +55,7 @@ export default function CommuneWithGodPage() {
     try {
       const res = await askTheDivine({ question: q });
       setAnswer(res.result);
+      trackStat(MODULE_ID, "answers");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {

@@ -1,8 +1,11 @@
-import { Suspense, lazy } from "react";
-import { Link, Route, Routes } from "react-router-dom";
+import { Suspense, lazy, useEffect } from "react";
+import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
+import { Trophy } from "lucide-react";
+import { trackVisit } from "@scroll-goblin/ui";
 import { MODULES } from "./modules/registry";
 import Landing from "./pages/Landing";
+import Leaderboard from "./pages/Leaderboard";
 
 /**
  * The shell: owns global chrome (nav, background, footer) and routing.
@@ -13,6 +16,21 @@ const moduleRoutes = MODULES.map((m) => ({
   ...m,
   Component: lazy(m.load),
 }));
+
+/**
+ * Records one leaderboard visit per module navigation. Lives in the shell so
+ * individual modules never have to think about visit counting.
+ */
+function VisitTracker() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const module = MODULES.find(
+      (m) => pathname === m.path || pathname.startsWith(`${m.path}/`)
+    );
+    if (module) trackVisit(module.id);
+  }, [pathname]);
+  return null;
+}
 
 export default function App() {
   return (
@@ -25,12 +43,21 @@ export default function App() {
           >
             Scroll Goblin
           </Link>
-          <Link
-            to="/"
-            className="rounded-neobrutal border-thin border-brand-border bg-brand-secondary px-3 py-1 text-xs font-bold text-brand-text shadow-neo-sm transition-[transform,box-shadow] duration-100 active:translate-x-0.5 active:translate-y-0.5 active:shadow-neo-pressed"
-          >
-            All apps
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/leaderboard"
+              className="inline-flex items-center gap-1 rounded-neobrutal border-thin border-brand-border bg-brand-warning px-3 py-1 text-xs font-bold text-brand-text shadow-neo-sm transition-[transform,box-shadow] duration-100 active:translate-x-0.5 active:translate-y-0.5 active:shadow-neo-pressed"
+            >
+              <Trophy className="h-3.5 w-3.5" />
+              Leaderboard
+            </Link>
+            <Link
+              to="/"
+              className="rounded-neobrutal border-thin border-brand-border bg-brand-secondary px-3 py-1 text-xs font-bold text-brand-text shadow-neo-sm transition-[transform,box-shadow] duration-100 active:translate-x-0.5 active:translate-y-0.5 active:shadow-neo-pressed"
+            >
+              All apps
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -42,8 +69,10 @@ export default function App() {
             </div>
           }
         >
+          <VisitTracker />
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
             {moduleRoutes.map((m) => (
               <Route key={m.id} path={`${m.path}/*`} element={<m.Component />} />
             ))}
