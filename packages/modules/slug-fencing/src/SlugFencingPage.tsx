@@ -1,10 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Card,
+  MuteButton,
   ShareButton,
   consumeShareSnapshot,
   trackStat,
 } from "@scroll-goblin/ui";
+import {
+  playGotHit,
+  playHit,
+  playLunge,
+  playMiss,
+  playReady,
+  playTired,
+} from "./sounds";
 
 /** State captured in a shareable link. Bump SHARE_VERSION on shape changes. */
 interface ShareState {
@@ -98,6 +107,8 @@ export default function SlugFencingPage() {
   const rival = useRef<Fencer>(makeFencer((TOP_Y + BOTTOM_Y) / 2));
   const keyDir = useRef(0); // -1 up, +1 down, from keyboard
   const ai = useRef({ nextThink: 0, nextLunge: 0 });
+  // Whether the player last had enough energy to lunge, for the ready tick.
+  const couldLunge = useRef(true);
   // Tracks the active pointer gesture so we can tell a drag (move) from a
   // tap (lunge) — essential on touch, where there is no hover to steer with.
   const gesture = useRef({ x: 0, y: 0, t: 0, moved: false });
@@ -153,8 +164,8 @@ export default function SlugFencingPage() {
     try {
       const anim = g.animate(
         [
-          { transform: "scale(0.3)", opacity: 1 },
-          { transform: "scale(1.4)", opacity: 0 },
+          { transform: `translate(${x}px, ${y}px) scale(0.3)`, opacity: 1 },
+          { transform: `translate(${x}px, ${y}px) scale(1.4)`, opacity: 0 },
         ],
         { duration: 320, easing: "ease-out" }
       );
@@ -182,11 +193,13 @@ export default function SlugFencingPage() {
     if (tryLunge(player.current, now)) {
       setLunges((n) => n + 1);
       trackStat(MODULE_ID, "lunges");
+      playLunge();
     } else if (
       player.current.energy < LUNGE_COST &&
       player.current.lungeStart === 0
     ) {
       setMessage(MESSAGES.tired);
+      playTired();
     }
   };
 
@@ -234,6 +247,10 @@ export default function SlugFencingPage() {
       f.targetY = clamp(f.targetY + keyDir.current * MOVE_SPEED * dt, TOP_Y, BOTTOM_Y);
     }
     applyMovement(f, dt);
+    // A soft tick the moment a spent meter refills enough to lunge again.
+    const ready = f.energy >= LUNGE_COST;
+    if (ready && !couldLunge.current) playReady();
+    couldLunge.current = ready;
     if (f.lungeStart !== 0 && now - f.lungeStart >= LUNGE_MS) {
       f.lungeStart = 0;
       f.lastLungeEnd = now;
@@ -275,6 +292,7 @@ export default function SlugFencingPage() {
       const aligned = Math.abs(f.y - foe.y) <= HIT_Y_TOL * 1.1;
       if (aligned && Math.random() < 0.6 && tryLunge(f, now)) {
         ai.current.nextLunge = now + 450 + Math.random() * 450;
+        playLunge(0.55);
       }
     }
     if (f.lungeStart !== 0 && now - f.lungeStart >= LUNGE_MS) {
@@ -304,8 +322,10 @@ export default function SlugFencingPage() {
         trackStat(MODULE_ID, "hits");
         setMessage(next > 1 ? MESSAGES.hitStreak : MESSAGES.hit);
         flashImpact(MID_X + 60 * dir, r.y);
+        playHit();
       } else {
         setMessage(MESSAGES.miss);
+        playMiss();
       }
     }
 
@@ -315,6 +335,7 @@ export default function SlugFencingPage() {
         setRivalScore((n) => n + 1);
         setMessage(MESSAGES.gotHit);
         flashImpact(MID_X - 60 * dir, p.y);
+        playGotHit();
       }
     }
   }
@@ -571,6 +592,7 @@ export default function SlugFencingPage() {
             >
               Reset
             </button>
+            <MuteButton />
             <ShareButton
               moduleId={MODULE_ID}
               version={SHARE_VERSION}

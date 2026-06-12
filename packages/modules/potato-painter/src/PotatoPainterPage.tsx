@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Card,
+  MuteButton,
   ShareButton,
   consumeShareSnapshot,
   trackStat,
 } from "@scroll-goblin/ui";
+import { playPickup, playReturn, playStamp, playWipe } from "./sounds";
 import {
   VARIETIES,
   makePotato,
@@ -223,8 +225,10 @@ export default function PotatoPainterPage() {
         );
         setUsed((n) => n + 1);
         setMessage(MESSAGES.used);
+        playStamp();
       } else {
         setMessage(MESSAGES.returned);
+        playReturn();
       }
     };
 
@@ -243,6 +247,7 @@ export default function PotatoPainterPage() {
   const pickUp = (slot: number) => (e: React.PointerEvent) => {
     e.preventDefault();
     setMessage(MESSAGES.pickup);
+    playPickup();
     setDrag({
       slot,
       potato: tray[slot],
@@ -257,6 +262,7 @@ export default function PotatoPainterPage() {
     stampsRef.current = [];
     setStampCount(0);
     setMessage(MESSAGES.cleared);
+    playWipe();
   };
 
   return (
@@ -339,6 +345,7 @@ export default function PotatoPainterPage() {
               })}
               className="!px-3 !py-1.5 !shadow-neo-sm"
             />
+            <MuteButton />
             <button
               onClick={clearCanvas}
               className="rounded-neobrutal border-thin border-brand-border bg-brand-secondary px-3 py-1.5 shadow-neo-sm transition-[transform,box-shadow] duration-100 active:translate-x-0.5 active:translate-y-0.5 active:shadow-neo-pressed"

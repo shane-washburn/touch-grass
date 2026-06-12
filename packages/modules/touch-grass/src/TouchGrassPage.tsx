@@ -1,10 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Card,
+  MuteButton,
   ShareButton,
   consumeShareSnapshot,
   trackStat,
 } from "@scroll-goblin/ui";
+import {
+  playPluck,
+  playRegrow,
+  playThriving,
+  startGrassAudio,
+  type GrassAudio,
+} from "./sounds";
 
 /** Number of grass blades in the field. */
 const BLADE_COUNT = 110;
@@ -155,6 +163,10 @@ export default function TouchGrassPage() {
   // Manual double-tap detection: iOS does not reliably fire dblclick for touch.
   const lastTap = useRef({ t: 0, x: 0 });
   const saidThriving = useRef(false);
+  // Ambient audio starts lazily on the first pointer-down (a user gesture,
+  // which browsers require before any sound can play).
+  const grassAudio = useRef<GrassAudio | null>(null);
+  const lastRegrowSound = useRef(0);
   // The rAF loop closes over this ref so mode switches apply without restarting it.
   const modeRef = useRef<Mode>("touch");
 
@@ -217,6 +229,11 @@ export default function TouchGrassPage() {
             b.squash = 0.05;
             b.angle = b.rest;
             setMessage(MESSAGES.regrow);
+            // Throttled so several blades regrowing at once don't stack.
+            if (now - lastRegrowSound.current > 250) {
+              lastRegrowSound.current = now;
+              playRegrow();
+            }
           }
 
           // Ambient breeze: a gentle, per-blade offset sine so the field is
@@ -242,6 +259,7 @@ export default function TouchGrassPage() {
               if (b.wet >= 1 && !saidThriving.current) {
                 saidThriving.current = true;
                 setMessage(MESSAGES.thriving);
+                playThriving();
               }
             } else if (!watering && falloff > 0 && overBlade) {
               if (p.down && modeRef.current === "touch") {
@@ -278,11 +296,26 @@ export default function TouchGrassPage() {
 
         // Pointer velocity decays so brush force fades between move events.
         p.vx *= 0.8;
+
+        // Drive the continuous audio layers from the same simulation state.
+        const audio = grassAudio.current;
+        if (audio) {
+          const brushing =
+            p.active && modeRef.current === "touch" && !watering;
+          audio.setBrush(
+            brushing ? Math.min(1, Math.abs(p.vx) / 14) + (p.down ? 0.25 : 0) : 0
+          );
+          audio.setPour(watering);
+        }
       }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf);
+      grassAudio.current?.stop();
+      grassAudio.current = null;
+    };
   }, []);
 
   const toLocal = (e: { clientX: number; clientY: number }) => {
@@ -306,6 +339,7 @@ export default function TouchGrassPage() {
   };
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    grassAudio.current ??= startGrassAudio();
     const { x, y } = toLocal(e);
     const p = pointer.current;
     p.x = x;
@@ -369,6 +403,7 @@ export default function TouchGrassPage() {
     setPlucks((n) => n + 1);
     trackStat(MODULE_ID, "plucks");
     setMessage(MESSAGES.pluck);
+    playPluck();
 
     // A little leaf pops out where the blade was plucked.
     const pop = document.createElement("span");
@@ -478,6 +513,7 @@ export default function TouchGrassPage() {
             <span>
               Waterings: <span className="bg-brand-warning px-1">{waters}</span>
             </span>
+            <MuteButton />
             <ShareButton
               moduleId={MODULE_ID}
               version={SHARE_VERSION}

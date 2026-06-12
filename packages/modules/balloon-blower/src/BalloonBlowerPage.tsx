@@ -1,11 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Card,
+  MuteButton,
   ShareButton,
   consumeShareSnapshot,
   trackStat,
 } from "@scroll-goblin/ui";
 import { startBlowMic, type BlowMic } from "./mic";
+import {
+  playCreak,
+  playPop,
+  playTieOff,
+  startInflateHiss,
+  type InflateHiss,
+} from "./sounds";
 
 /** State captured in a shareable link. Bump SHARE_VERSION on shape changes. */
 interface ShareState {
@@ -77,6 +85,11 @@ export default function BalloonBlowerPage() {
   const armedRef = useRef(false);
   const fullNoted = useRef(false);
   const mic = useRef<BlowMic | null>(null);
+  const hiss = useRef<InflateHiss | null>(null);
+  const lastCreak = useRef(0);
+  // Last rendered balloon centre x (the shake offsets it), so the pop burst
+  // can flash exactly where the balloon was.
+  const balloonX = useRef(160);
 
   // --- DOM refs driven imperatively each frame (no per-frame React state). ---
   const balloonGroup = useRef<SVGGElement>(null);
@@ -108,18 +121,32 @@ export default function BalloonBlowerPage() {
     setPopped((n) => n + 1);
     trackStat(MODULE_ID, "popped");
     setMessage(MESSAGES.popped);
+    playPop();
 
-    // Flash the burst, then float in a fresh balloon.
+    // Flash the burst centred on the balloon's last rendered position, then
+    // float in a fresh balloon. The translate must live inside the keyframes:
+    // a CSS transform overrides the SVG transform attribute, so scale-only
+    // keyframes would yank the burst to the SVG origin. No `fill: "forwards"`
+    // for the same reason — a persisted CSS transform would stick around.
     const g = burst.current;
     if (g) {
+      const x = balloonX.current;
+      g.setAttribute("transform", `translate(${x} 150)`);
       g.style.opacity = "1";
-      g.animate(
-        [
-          { transform: "scale(0.4)", opacity: 1 },
-          { transform: "scale(1.6)", opacity: 0 },
-        ],
-        { duration: 480, easing: "ease-out", fill: "forwards" }
-      );
+      try {
+        const anim = g.animate(
+          [
+            { transform: `translate(${x}px, 150px) scale(0.4)`, opacity: 1 },
+            { transform: `translate(${x}px, 150px) scale(1.6)`, opacity: 0 },
+          ],
+          { duration: 480, easing: "ease-out" }
+        );
+        anim.onfinish = () => {
+          g.style.opacity = "0";
+        };
+      } catch {
+        g.style.opacity = "0";
+      }
     }
     window.setTimeout(resetBalloon, 650);
   };
@@ -129,6 +156,7 @@ export default function BalloonBlowerPage() {
     setFilled((n) => n + 1);
     trackStat(MODULE_ID, "filled");
     setMessage(MESSAGES.tied);
+    playTieOff();
     resetBalloon();
   };
 
@@ -143,6 +171,10 @@ export default function BalloonBlowerPage() {
 
       // Blow strength comes from the microphone (mouth-powered only).
       const blow = mic.current ? mic.current.level() : 0;
+      hiss.current?.update(
+        phaseRef.current === "live" ? blow : 0,
+        clamp(fill.current / FULL, 0, 1)
+      );
 
       if (phaseRef.current === "live") {
         if (blow > 0.05) {
@@ -165,6 +197,13 @@ export default function BalloonBlowerPage() {
           if (nowFull !== fullNoted.current) {
             fullNoted.current = nowFull;
             if (nowFull) setMessage(MESSAGES.full);
+          }
+          // Rubbery stress creaks while in the danger zone past full.
+          if (nowFull && now - lastCreak.current > 300) {
+            lastCreak.current = now;
+            playCreak(
+              clamp((fill.current - FULL) / (EXPLODE - FULL), 0, 1)
+            );
           }
         }
       }
@@ -212,6 +251,7 @@ export default function BalloonBlowerPage() {
           rot = (Math.random() - 0.5) * 8 * intensity;
           dx = (Math.random() - 0.5) * 8 * intensity;
         }
+        balloonX.current = 160 + dx;
         g.setAttribute(
           "transform",
           `translate(${160 + dx} 150) scale(${scale}) rotate(${rot})`
@@ -232,6 +272,7 @@ export default function BalloonBlowerPage() {
   const enableMic = async () => {
     try {
       mic.current = await startBlowMic();
+      hiss.current ??= startInflateHiss();
       setMicOn(true);
       setMessage(MESSAGES.blowing);
     } catch {
@@ -246,6 +287,8 @@ export default function BalloonBlowerPage() {
     return () => {
       mic.current?.stop();
       mic.current = null;
+      hiss.current?.stop();
+      hiss.current = null;
     };
   }, []);
 
@@ -424,6 +467,7 @@ export default function BalloonBlowerPage() {
               getState={(): ShareState => ({ filled, popped })}
               className="!px-3 !py-1.5 !shadow-neo-sm"
             />
+            <MuteButton />
           </div>
         </div>
       </Card>
