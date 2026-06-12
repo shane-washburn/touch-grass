@@ -21,9 +21,25 @@ export interface BlowMic {
   stop(): void;
 }
 
-/** Tuning constants — chosen to map a comfortable blow to the upper range. */
-const GATE = 0.04; // headroom above the noise floor before anything registers
-const SCALE = 0.9; // raw signal that maps to full strength
+/**
+ * Mobile detection for mic tuning. Phone/tablet mics run aggressive
+ * hardware-level wind/noise suppression that we can't fully disable via
+ * getUserMedia constraints, so a blow registers far weaker than on a desktop
+ * mic. The coarse-pointer check catches iPadOS, which masquerades as macOS
+ * in its user agent.
+ */
+const IS_MOBILE =
+  /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+  (typeof window.matchMedia === "function" &&
+    window.matchMedia("(pointer: coarse)").matches);
+
+/**
+ * Tuning constants — chosen to map a comfortable blow to the upper range.
+ * Mobile gets a much lower gate and scale (~2× sensitivity) to compensate
+ * for the suppressed signal; desktop mics are already plenty sensitive.
+ */
+const GATE = IS_MOBILE ? 0.02 : 0.04; // headroom above the noise floor before anything registers
+const SCALE = IS_MOBILE ? 0.45 : 0.9; // raw signal that maps to full strength
 const ATTACK = 0.35; // how fast the meter rises toward a louder target
 const RELEASE = 0.22; // how fast it falls toward a quieter target
 
@@ -87,9 +103,11 @@ export async function startBlowMic(): Promise<BlowMic> {
       const raw = rms * 2 + lowAvg * 0.6;
 
       // Adaptive floor: drop quickly toward quiet, creep up slowly so a
-      // sustained blow can't be "learned" as background and ignored.
+      // sustained blow can't be "learned" as background and ignored. The
+      // creep is slower on mobile, where suppressed blows sit much closer
+      // to the floor and would otherwise get absorbed into it.
       if (raw < noiseFloor) noiseFloor = noiseFloor * 0.9 + raw * 0.1;
-      else noiseFloor = Math.min(noiseFloor + 0.0006, raw);
+      else noiseFloor = Math.min(noiseFloor + (IS_MOBILE ? 0.0003 : 0.0006), raw);
 
       const target = clamp((raw - noiseFloor - GATE) / SCALE, 0, 1);
       const rate = target > smoothed ? ATTACK : RELEASE;
