@@ -47,8 +47,8 @@ const IS_MOBILE =
  * Mobile gets a much lower gate and scale (~2× sensitivity) to compensate
  * for the suppressed signal; desktop mics are already plenty sensitive.
  */
-const GATE = IS_MOBILE ? 0.025 : 0.05; // headroom above the noise floor before anything registers
-const SCALE = IS_MOBILE ? 0.55 : 1.05; // raw signal that maps to full strength
+const GATE = IS_MOBILE ? 0.015 : 0.05; // headroom above the noise floor before anything registers
+const SCALE = IS_MOBILE ? 0.35 : 1.05; // raw signal that maps to full strength
 const ATTACK = 0.35; // how fast the meter rises toward a louder target
 const RELEASE = 0.45; // how fast it falls toward a quieter target
 
@@ -59,8 +59,8 @@ const RELEASE = 0.45; // how fast it falls toward a quieter target
  * is restored by FLAT_HI. Mobile mics' wind suppression smears the spectrum,
  * so the band sits lower there.
  */
-const FLAT_LO = IS_MOBILE ? 0.1 : 0.18;
-const FLAT_HI = IS_MOBILE ? 0.3 : 0.45;
+const FLAT_LO = IS_MOBILE ? 0.05 : 0.18;
+const FLAT_HI = IS_MOBILE ? 0.18 : 0.45;
 
 /**
  * Sustain fatigue. A signal can stay loud for SUSTAIN_GRACE seconds at full
