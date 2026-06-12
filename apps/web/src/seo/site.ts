@@ -8,7 +8,7 @@ export const SITE_URL = "https://scrollgoblin.fun";
 export const SITE_NAME = "Scroll Goblin";
 
 export const SITE_DESCRIPTION =
-  "A suite of gloriously pointless AI-powered mini-apps: translate text to emoji, touch virtual grass, scream at a chicken, commune with god, paint potatoes, and fence with slugs.";
+  "A suite of gloriously pointless AI-powered mini-apps: translate text to emoji, touch virtual grass, scream at a chicken, commune with god, paint potatoes, fence with slugs, and blow up balloons with your voice.";
 
 export const OG_IMAGE = `${SITE_URL}/scroll-goblin-mascot.png`;
 

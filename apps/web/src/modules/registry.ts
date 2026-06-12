@@ -5,6 +5,7 @@ import { manifest as screamingChicken } from "@scroll-goblin/module-screaming-ch
 import { manifest as communeWithGod } from "@scroll-goblin/module-commune-with-god";
 import { manifest as potatoPainter } from "@scroll-goblin/module-potato-painter";
 import { manifest as slugFencing } from "@scroll-goblin/module-slug-fencing";
+import { manifest as balloonBlower } from "@scroll-goblin/module-balloon-blower";
 
 /**
  * The single source of truth for every module in the suite.
@@ -20,4 +21,5 @@ export const MODULES: ModuleManifest[] = [
   communeWithGod,
   potatoPainter,
   slugFencing,
+  balloonBlower,
 ];
