@@ -140,6 +140,10 @@ export const STAT_METRICS: Record<string, Record<string, string>> = {
     hits: "Slug hits landed",
     lunges: "Lunges thrown",
   },
+  "balloon-blower": {
+    filled: "Balloons filled",
+    popped: "Balloons popped",
+  },
 };
 
 /** Reserved metric name for page visits; valid for every module. */

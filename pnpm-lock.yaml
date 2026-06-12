@@ -57,6 +57,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@scroll-goblin/module-balloon-blower':
+        specifier: workspace:*
+        version: link:../../packages/modules/balloon-blower
       '@scroll-goblin/module-commune-with-god':
         specifier: workspace:*
         version: link:../../packages/modules/commune-with-god
@@ -127,6 +130,22 @@ importers:
       vite:
         specifier: ^5.4.8
         version: 5.4.21(@types/node@22.19.20)
+
+  packages/modules/balloon-blower:
+    dependencies:
+      '@scroll-goblin/ui':
+        specifier: workspace:*
+        version: link:../../ui
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.11
+        version: 18.3.31
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
 
   packages/modules/commune-with-god:
     dependencies:
