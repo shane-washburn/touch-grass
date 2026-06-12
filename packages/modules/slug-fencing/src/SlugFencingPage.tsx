@@ -95,6 +95,9 @@ export default function SlugFencingPage() {
   const rival = useRef<Fencer>(makeFencer((TOP_Y + BOTTOM_Y) / 2));
   const keyDir = useRef(0); // -1 up, +1 down, from keyboard
   const ai = useRef({ nextThink: 0, nextLunge: 0 });
+  // Tracks the active pointer gesture so we can tell a drag (move) from a
+  // tap (lunge) — essential on touch, where there is no hover to steer with.
+  const gesture = useRef({ x: 0, y: 0, t: 0, moved: false });
 
   const snapshot = useRef(
     consumeShareSnapshot<ShareState>(MODULE_ID, SHARE_VERSION)
@@ -313,12 +316,40 @@ export default function SlugFencingPage() {
     );
   };
 
+  /** Movement threshold (client px) past which a press counts as a drag. */
+  const DRAG_SLOP = 8;
+  /** Max press duration (ms) that can still register as a lunge tap. */
+  const TAP_MS = 350;
+
   const onPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
     player.current.targetY = toSvgY(e.clientY);
+    const g = gesture.current;
+    if (
+      Math.abs(e.clientX - g.x) > DRAG_SLOP ||
+      Math.abs(e.clientY - g.y) > DRAG_SLOP
+    ) {
+      g.moved = true;
+    }
   };
   const onPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
+    // Capture the pointer so drag-to-move keeps tracking on touch even if the
+    // finger strays outside the SVG bounds.
+    e.currentTarget.setPointerCapture(e.pointerId);
     player.current.targetY = toSvgY(e.clientY);
-    playerLunge();
+    gesture.current = {
+      x: e.clientX,
+      y: e.clientY,
+      t: performance.now(),
+      moved: false,
+    };
+  };
+  const onPointerUp = () => {
+    // A quick press that didn't turn into a drag is a lunge. Dragging just
+    // moves the slug (no lunge), so movement and attacks don't fight on touch.
+    const g = gesture.current;
+    if (!g.moved && performance.now() - g.t < TAP_MS) {
+      playerLunge();
+    }
   };
 
   useEffect(() => {
@@ -375,9 +406,9 @@ export default function SlugFencingPage() {
           </h1>
         </div>
         <p className="rounded-neobrutal border-thick border-brand-border bg-brand-surface p-5 text-sm font-bold leading-relaxed shadow-neo-lg">
-          Move your slug up and down with the mouse (or W / S). Click — or tap
-          Space — to lunge. Line up with your rival and strike to score. Every
-          move and lunge burns energy, so watch your meter.
+          Move your slug up and down — drag on touch, or use the mouse / W / S.
+          Tap (or click, or Space) to lunge. Line up with your rival and strike
+          to score. Every move and lunge burns energy, so watch your meter.
         </p>
       </header>
 
@@ -418,6 +449,8 @@ export default function SlugFencingPage() {
             viewBox={`0 0 ${VW} ${VH}`}
             onPointerMove={onPointerMove}
             onPointerDown={onPointerDown}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
             className="h-[360px] w-full cursor-crosshair touch-none select-none"
           >
             {/* Centre line */}
