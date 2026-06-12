@@ -144,7 +144,7 @@ export default function EmojiTranslatorPage() {
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value as LanguageCode)}
-              className="rounded-neobrutal border-thin border-brand-border bg-brand-background px-2 py-1.5 text-sm font-bold text-brand-text shadow-neo-sm outline-none focus:bg-brand-warning"
+              className="rounded-neobrutal border-thin border-brand-border bg-brand-background px-2 py-1.5 text-base font-bold text-brand-text shadow-neo-sm outline-none focus:bg-brand-warning sm:text-sm"
             >
               {LANGUAGES.map((l) => (
                 <option key={l.code} value={l.code}>
@@ -221,7 +221,7 @@ export default function EmojiTranslatorPage() {
           <button
             onClick={onTranslate}
             disabled={loading || !input.trim()}
-            className="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-neobrutal border-thick border-brand-border bg-brand-primary px-5 py-3 font-bold text-brand-text shadow-neo-lg transition-[transform,box-shadow,background-color] duration-100 active:translate-x-1 active:translate-y-1 active:shadow-neo-pressed disabled:cursor-not-allowed disabled:opacity-50 disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-neo-lg sm:static sm:px-5 sm:py-2.5"
+            className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] z-50 inline-flex items-center gap-2 rounded-neobrutal border-thick border-brand-border bg-brand-primary px-5 py-3 font-bold text-brand-text shadow-neo-lg transition-[transform,box-shadow,background-color] duration-100 active:translate-x-1 active:translate-y-1 active:shadow-neo-pressed disabled:cursor-not-allowed disabled:opacity-50 disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-neo-lg sm:static sm:bottom-auto sm:right-auto sm:px-5 sm:py-2.5"
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

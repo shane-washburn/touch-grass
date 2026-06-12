@@ -152,6 +152,8 @@ export default function TouchGrassPage() {
   const pointer = useRef({ x: -9999, y: -9999, vx: 0, down: false, active: false });
   const lastBrushMsg = useRef(0);
   const lastDroplet = useRef(0);
+  // Manual double-tap detection: iOS does not reliably fire dblclick for touch.
+  const lastTap = useRef({ t: 0, x: 0 });
   const saidThriving = useRef(false);
   // The rAF loop closes over this ref so mode switches apply without restarting it.
   const modeRef = useRef<Mode>("touch");
@@ -310,6 +312,19 @@ export default function TouchGrassPage() {
     p.y = y;
     p.down = true;
     p.active = true;
+
+    // Double-tap to pluck (works on touch, where dblclick is unreliable).
+    if (modeRef.current === "touch") {
+      const now = performance.now();
+      const tap = lastTap.current;
+      if (now - tap.t < 300 && Math.abs(x - tap.x) < 40) {
+        lastTap.current = { t: 0, x: 0 };
+        pluckNearest(x);
+        return;
+      }
+      lastTap.current = { t: now, x };
+    }
+
     if (modeRef.current === "water") {
       setWaters((w) => w + 1);
       trackStat(MODULE_ID, "waters");
@@ -330,10 +345,9 @@ export default function TouchGrassPage() {
     pointer.current.down = false;
   };
 
-  const onDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const pluckNearest = (x: number) => {
     const field = fieldRef.current;
     if (!field || modeRef.current !== "touch") return;
-    const { x } = toLocal(e);
     const W = field.clientWidth;
 
     // Pluck the nearest standing blade within reach.
@@ -384,7 +398,7 @@ export default function TouchGrassPage() {
           </h1>
         </div>
         <p className="rounded-neobrutal border-thick border-brand-border bg-brand-surface p-5 text-sm font-bold leading-relaxed shadow-neo-lg">
-          Brush it, press to flatten it, double-click to pluck a blade — or
+          Brush it, press to flatten it, double-tap to pluck a blade — or
           grab the watering can and help it grow.
         </p>
       </header>
@@ -417,7 +431,7 @@ export default function TouchGrassPage() {
           <p className="text-xs font-bold text-brand-text">
             {mode === "water"
               ? "Press and hold to pour"
-              : "Brush, press, or double-click"}
+              : "Brush, press, or double-tap"}
           </p>
         </div>
 
@@ -428,7 +442,6 @@ export default function TouchGrassPage() {
           onPointerUp={endPress}
           onPointerCancel={onPointerLeave}
           onPointerLeave={onPointerLeave}
-          onDoubleClick={onDoubleClick}
           className="relative h-80 w-full cursor-pointer touch-none select-none overflow-hidden bg-gradient-to-b from-brand-secondary via-white to-brand-primary"
         >
           {/* Sun */}

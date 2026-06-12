@@ -14,7 +14,15 @@
 let ctx: AudioContext | null = null;
 
 function getCtx(): AudioContext {
-  if (!ctx) ctx = new AudioContext();
+  if (!ctx) {
+    // iOS Safari < 14.5 only exposes the prefixed constructor; fall back to it
+    // so the module doesn't throw on older iPhones.
+    const Ctor =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
+    ctx = new Ctor();
+  }
   // Browsers suspend contexts created before a user gesture; resume lazily.
   if (ctx.state === "suspended") void ctx.resume();
   return ctx;
