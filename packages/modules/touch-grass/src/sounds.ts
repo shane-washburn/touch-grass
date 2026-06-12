@@ -5,7 +5,7 @@
  * browsers block audio before a user gesture):
  *  - A faint ambient breeze that slowly swells and fades.
  *  - A rustle that follows how fast the pointer brushes through the blades.
- *  - A pour while watering, with a slow bubbly wobble.
+ *  - Watering: a soft spray hiss plus randomized droplet "plips".
  *
  * One-shots: a snap when a blade is plucked, a boing when one regrows, and a
  * little chime when a blade reaches full wetness.
@@ -61,24 +61,48 @@ export function startGrassAudio(): GrassAudio {
   rustleSrc.connect(rustleFilter).connect(rustleGain).connect(out);
   rustleSrc.start();
 
-  // --- Watering pour: low noise with a gentle bubbly wobble ---
+  // --- Watering: a soft high spray hiss under randomized droplet plips ---
   const pourSrc = ac.createBufferSource();
   pourSrc.buffer = noise;
   pourSrc.loop = true;
   const pourFilter = ac.createBiquadFilter();
-  pourFilter.type = "lowpass";
-  pourFilter.frequency.value = 950;
+  pourFilter.type = "bandpass";
+  pourFilter.frequency.value = 2400;
+  pourFilter.Q.value = 0.6;
   const pourGain = ac.createGain();
   pourGain.gain.value = 0;
-  const pourLfo = ac.createOscillator();
-  pourLfo.type = "sine";
-  pourLfo.frequency.value = 7;
-  const pourLfoGain = ac.createGain();
-  pourLfoGain.gain.value = 0;
-  pourLfo.connect(pourLfoGain).connect(pourGain.gain);
   pourSrc.connect(pourFilter).connect(pourGain).connect(out);
   pourSrc.start();
-  pourLfo.start();
+
+  /** One water-drop "plip": a short sine with a quick upward pitch bend. */
+  const plip = () => {
+    const now = ac.currentTime;
+    const from = 350 + Math.random() * 500;
+    const dur = 0.04 + Math.random() * 0.05;
+    const osc = ac.createOscillator();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(from, now);
+    osc.frequency.exponentialRampToValueAtTime(from * (1.8 + Math.random()), now + dur);
+    const gain = ac.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.03 + Math.random() * 0.04, now + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + dur + 0.03);
+    osc.connect(gain).connect(out);
+    osc.start(now);
+    osc.stop(now + dur + 0.05);
+  };
+
+  // Droplets fire on a jittered timer while pouring, so they never settle
+  // into a rhythmic chug.
+  let dripTimer = 0;
+  const scheduleDrip = () => {
+    dripTimer = window.setTimeout(() => {
+      plip();
+      if (Math.random() < 0.35) plip();
+      scheduleDrip();
+    }, 50 + Math.random() * 110);
+  };
+  let pouring = false;
 
   return {
     setBrush(level) {
@@ -86,16 +110,21 @@ export function startGrassAudio(): GrassAudio {
       rustleGain.gain.setTargetAtTime(v * 0.11, ac.currentTime, 0.05);
     },
     setPour(on) {
+      if (on === pouring) return;
+      pouring = on;
       const now = ac.currentTime;
-      pourGain.gain.setTargetAtTime(on ? 0.1 : 0, now, on ? 0.06 : 0.12);
-      pourLfoGain.gain.setTargetAtTime(on ? 0.025 : 0, now, 0.1);
+      pourGain.gain.setTargetAtTime(on ? 0.035 : 0, now, on ? 0.06 : 0.12);
+      if (on) scheduleDrip();
+      else window.clearTimeout(dripTimer);
     },
     stop() {
+      window.clearTimeout(dripTimer);
+      pouring = false;
       const now = ac.currentTime;
       for (const g of [breezeGain, rustleGain, pourGain]) {
         g.gain.setTargetAtTime(0, now, 0.05);
       }
-      for (const s of [breezeSrc, rustleSrc, pourSrc, breezeLfo, pourLfo]) {
+      for (const s of [breezeSrc, rustleSrc, pourSrc, breezeLfo]) {
         s.stop(now + 0.4);
       }
     },
