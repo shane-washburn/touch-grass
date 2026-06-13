@@ -309,8 +309,8 @@ export default function EasyButtonPage() {
           </h1>
         </div>
         <div className="rounded-neobrutal border-thick border-brand-border bg-brand-surface p-5 text-sm font-bold leading-relaxed shadow-neo-lg">
-          Record your own button voice, save it to Redis, and share a spell that
-          expires before it gets too powerful.
+          Record your own button voice, save it, and share a spell that expires
+          before it gets too powerful.
         </div>
       </header>
 
