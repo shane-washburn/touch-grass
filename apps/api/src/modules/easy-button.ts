@@ -82,7 +82,7 @@ easyButtonRouter.post("/v1/clips", async (c) => {
   if (!redis) return c.json({ error: "Clip storage is not configured." }, 503);
 
   const rate = await enforceRateLimit(clientIp(c.req.raw.headers));
-  if (!rate.ok) {
+  if (rate.ok === false) {
     return c.json(rate.body, rate.status, {
       "Retry-After": String(rate.body.retryAfterSeconds),
     });
