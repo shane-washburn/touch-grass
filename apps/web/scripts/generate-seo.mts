@@ -106,7 +106,15 @@ function applyMeta(html: string, page: Page): string {
   const url = `${SITE_URL}${page.path === "/" ? "/" : page.path}`;
   let out = html
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>`)
-    .replaceAll(SITE_DESCRIPTION, description)
+    .replace(/(name="description"[\s\S]*?content=")[^"]*(")/, `$1${description}$2`)
+    .replace(
+      /(property="og:description"[\s\S]*?content=")[^"]*(")/,
+      `$1${description}$2`
+    )
+    .replace(
+      /(name="twitter:description"[\s\S]*?content=")[^"]*(")/,
+      `$1${description}$2`
+    )
     .replace(/(rel="canonical" href=")[^"]*(")/, `$1${url}$2`)
     .replace(/(property="og:url"[\s\S]*?content=")[^"]*(")/, `$1${url}$2`)
     .replace(/(property="og:title"[\s\S]*?content=")[^"]*(")/, `$1${title}$2`)
