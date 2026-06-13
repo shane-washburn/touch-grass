@@ -93,6 +93,21 @@ export default function EmojiTranslatorPage() {
     setTimeout(() => setCopied(false), 1500);
   };
 
+  const renderTranslateButton = (className = "") => (
+    <button
+      onClick={onTranslate}
+      disabled={loading || !input.trim()}
+      className={`inline-flex items-center gap-2 rounded-neobrutal border-thick border-brand-border bg-brand-primary px-5 py-2.5 font-bold text-brand-text shadow-neo-lg transition-[transform,box-shadow,background-color] duration-100 active:translate-x-1 active:translate-y-1 active:shadow-neo-pressed disabled:cursor-not-allowed disabled:opacity-50 disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-neo-lg ${className}`}
+    >
+      {loading ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <Sparkles className="h-4 w-4" />
+      )}
+      Translate
+    </button>
+  );
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:py-12">
       <header className="mb-bento grid gap-bento sm:grid-cols-[1fr_1fr]">
@@ -169,7 +184,7 @@ export default function EmojiTranslatorPage() {
             className="min-h-[180px] w-full resize-none rounded-neobrutal border-thick border-brand-border bg-brand-surface p-4 text-base font-bold text-brand-text shadow-neo-md outline-none transition focus:bg-brand-background"
           />
 
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center gap-3 sm:gap-0">
             <button
               onClick={swap}
               title="Swap direction"
@@ -177,6 +192,7 @@ export default function EmojiTranslatorPage() {
             >
               <ArrowLeftRight className="h-5 w-5" />
             </button>
+            {renderTranslateButton("sm:hidden")}
           </div>
 
           <div className="relative min-h-[180px] w-full rounded-neobrutal border-thick border-brand-border bg-brand-primary p-4 shadow-neo-md">
@@ -218,18 +234,7 @@ export default function EmojiTranslatorPage() {
               result,
             })}
           />
-          <button
-            onClick={onTranslate}
-            disabled={loading || !input.trim()}
-            className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-[calc(1.5rem+env(safe-area-inset-right))] z-50 inline-flex items-center gap-2 rounded-neobrutal border-thick border-brand-border bg-brand-primary px-5 py-3 font-bold text-brand-text shadow-neo-lg transition-[transform,box-shadow,background-color] duration-100 active:translate-x-1 active:translate-y-1 active:shadow-neo-pressed disabled:cursor-not-allowed disabled:opacity-50 disabled:active:translate-x-0 disabled:active:translate-y-0 disabled:active:shadow-neo-lg sm:static sm:bottom-auto sm:right-auto sm:px-5 sm:py-2.5"
-          >
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Sparkles className="h-4 w-4" />
-            )}
-            Translate
-          </button>
+          {renderTranslateButton("hidden sm:inline-flex")}
         </div>
 
         {/* Error */}

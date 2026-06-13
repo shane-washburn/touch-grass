@@ -17,18 +17,18 @@ export type Direction = z.infer<typeof DirectionSchema>;
  */
 export const LANGUAGES = [
   { code: "en", label: "English" },
-  { code: "es", label: "Spanish" },
+  { code: "ar", label: "Arabic" },
+  { code: "zh", label: "Chinese (Simplified)" },
+  { code: "nl", label: "Dutch" },
   { code: "fr", label: "French" },
   { code: "de", label: "German" },
+  { code: "hi", label: "Hindi" },
   { code: "it", label: "Italian" },
-  { code: "pt", label: "Portuguese" },
-  { code: "nl", label: "Dutch" },
-  { code: "ru", label: "Russian" },
   { code: "ja", label: "Japanese" },
   { code: "ko", label: "Korean" },
-  { code: "zh", label: "Chinese (Simplified)" },
-  { code: "hi", label: "Hindi" },
-  { code: "ar", label: "Arabic" },
+  { code: "pt", label: "Portuguese" },
+  { code: "ru", label: "Russian" },
+  { code: "es", label: "Spanish" },
   { code: "uk", label: "Ukrainian" },
 ] as const;
 
