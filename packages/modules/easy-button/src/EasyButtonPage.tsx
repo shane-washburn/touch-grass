@@ -3,7 +3,6 @@ import {
   Loader2,
   Mic,
   Play,
-  RotateCcw,
   Save,
   Square,
   UploadCloud,
@@ -359,95 +358,77 @@ export default function EasyButtonPage() {
           </div>
         )}
 
-        <div className="grid gap-bento lg:grid-cols-[1fr_1fr]">
-          <div className="rounded-neobrutal border-thick border-brand-border bg-brand-surface p-4 shadow-neo-md">
-            <h2 className="mb-3 font-heading text-2xl uppercase leading-none">
-              Custom voice
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {recording ? (
-                <Button onClick={stopRecording} className="bg-brand-warning">
-                  <Square className="h-4 w-4" />
-                  Stop
-                </Button>
+        <div className="rounded-neobrutal border-thick border-brand-border bg-brand-surface p-4 shadow-neo-md">
+          <h2 className="mb-3 font-heading text-2xl uppercase leading-none">
+            Custom voice
+          </h2>
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+            {recording ? (
+              <Button
+                onClick={stopRecording}
+                className="min-h-12 w-full !bg-brand-warning sm:min-h-0 sm:w-auto"
+              >
+                <Square className="h-4 w-4" />
+                Stop
+              </Button>
+            ) : (
+              <Button
+                onClick={startRecording}
+                disabled={!canRecord}
+                className="min-h-12 w-full bg-brand-primary sm:min-h-0 sm:w-auto"
+              >
+                <Mic className="h-4 w-4" />
+                Record
+              </Button>
+            )}
+            <Button
+              onClick={previewRecording}
+              disabled={!localClip || recording}
+              className="min-h-12 w-full !bg-brand-orange sm:min-h-0 sm:w-auto"
+            >
+              <Play className="h-4 w-4" />
+              Preview
+            </Button>
+            <Button
+              onClick={saveRecording}
+              disabled={!localClip || recording || uploadStatus === "saving"}
+              className="min-h-12 w-full !bg-brand-warning sm:min-h-0 sm:w-auto"
+            >
+              {uploadStatus === "saving" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : uploadStatus === "saved" ? (
+                <Save className="h-4 w-4" />
               ) : (
-                <Button
-                  onClick={startRecording}
-                  disabled={!canRecord}
-                  className="bg-brand-primary"
-                >
-                  <Mic className="h-4 w-4" />
-                  Record
-                </Button>
+                <UploadCloud className="h-4 w-4" />
               )}
-              <Button
-                onClick={previewRecording}
-                disabled={!localClip || recording}
-                className="bg-brand-secondary"
-              >
-                <Play className="h-4 w-4" />
-                Preview
-              </Button>
-              <Button
-                onClick={restoreDefault}
-                disabled={!activeClip.custom || recording}
-                className="bg-brand-background"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Reset
-              </Button>
-            </div>
+              {uploadStatus === "saved" ? "Saved" : "Save"}
+            </Button>
+            <ShareButton
+              moduleId={MODULE_ID}
+              version={SHARE_VERSION}
+              getState={() => ({ clipId: uploadedClipId })}
+              disabled={!uploadedClipId}
+              className="min-h-12 w-full justify-center bg-brand-secondary px-5 text-base sm:min-h-0 sm:w-auto"
+            />
+          </div>
 
-            <div className="mt-4 h-5 rounded-neobrutal border-thin border-brand-border bg-brand-background">
-              <div
-                className="h-full bg-brand-alert transition-[width] duration-100"
-                style={{ width: `${recording ? recordingProgress : 0}%` }}
-              />
-            </div>
-            <p className="mt-2 text-xs font-bold">
-              {recording
-                ? `${recordingSeconds}s / 10s`
+          <div className="mt-4 h-5 rounded-neobrutal border-thin border-brand-border bg-brand-background">
+            <div
+              className="h-full bg-brand-alert transition-[width] duration-100"
+              style={{ width: `${recording ? recordingProgress : 0}%` }}
+            />
+          </div>
+          <p className="mt-2 text-xs font-bold">
+            {recording
+              ? `${recordingSeconds}s / 10s`
+              : uploadedClipId
+                ? `Clip ${uploadedClipId.slice(0, 8)} is ready to share.`
                 : localClip
                   ? `${formatBytes(localClip.size)} captured`
                   : canRecord
                     ? "10 seconds max. 500KB max."
                     : "Recording is not supported in this browser."}
-            </p>
-          </div>
-
-          <div className="rounded-neobrutal border-thick border-brand-border bg-brand-warning p-4 shadow-neo-md">
-            <h2 className="mb-3 font-heading text-2xl uppercase leading-none">
-              Save + share
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              <Button
-                onClick={saveRecording}
-                disabled={!localClip || recording || uploadStatus === "saving"}
-                className="bg-brand-primary"
-              >
-                {uploadStatus === "saving" ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : uploadStatus === "saved" ? (
-                  <Save className="h-4 w-4" />
-                ) : (
-                  <UploadCloud className="h-4 w-4" />
-                )}
-                {uploadStatus === "saved" ? "Saved" : "Save"}
-              </Button>
-              <ShareButton
-                moduleId={MODULE_ID}
-                version={SHARE_VERSION}
-                getState={() => ({ clipId: uploadedClipId })}
-                disabled={!uploadedClipId}
-                className="bg-brand-secondary"
-              />
-            </div>
-            <p className="mt-3 text-xs font-bold">
-              {uploadedClipId
-                ? `Clip ${uploadedClipId.slice(0, 8)} is ready to share.`
-                : "Save a recording before sharing."}
-            </p>
-          </div>
+          </p>
         </div>
       </Card>
     </div>
