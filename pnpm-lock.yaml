@@ -72,6 +72,9 @@ importers:
       '@scroll-goblin/module-potato-painter':
         specifier: workspace:*
         version: link:../../packages/modules/potato-painter
+      '@scroll-goblin/module-pushy-paws':
+        specifier: workspace:*
+        version: link:../../packages/modules/pushy-paws
       '@scroll-goblin/module-screaming-chicken':
         specifier: workspace:*
         version: link:../../packages/modules/screaming-chicken
@@ -226,6 +229,22 @@ importers:
         version: 5.4.21(@types/node@22.19.20)
 
   packages/modules/potato-painter:
+    dependencies:
+      '@scroll-goblin/ui':
+        specifier: workspace:*
+        version: link:../../ui
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.11
+        version: 18.3.31
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
+  packages/modules/pushy-paws:
     dependencies:
       '@scroll-goblin/ui':
         specifier: workspace:*

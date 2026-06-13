@@ -171,6 +171,9 @@ export const STAT_METRICS: Record<string, Record<string, string>> = {
     presses: "Easy Button presses",
     recordings: "Unique custom recordings played",
   },
+  "pushy-paws": {
+    pushed: "Items pushed off shelves",
+  },
 };
 
 /** Reserved metric name for page visits; valid for every module. */
