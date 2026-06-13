@@ -88,11 +88,14 @@ export function trackPageView(params: {
   title: string;
   moduleId?: string;
 }): void {
-  trackEvent("page_view", {
+  if (!canTrack() || !GA_ID) return;
+  initGoogleAnalytics();
+  window.gtag?.("config", GA_ID, {
     page_title: params.title,
     page_location: window.location.href,
     page_path: params.path,
     module_id: params.moduleId,
+    visitor_type: getVisitorType(),
   });
 }
 
