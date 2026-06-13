@@ -55,13 +55,13 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return btoa(binary);
 }
 
-function base64ToBytes(base64: string): Uint8Array {
+function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) {
     bytes[i] = binary.charCodeAt(i);
   }
-  return bytes;
+  return bytes.buffer;
 }
 
 async function enforceRateLimit(ip: string): Promise<
@@ -176,7 +176,7 @@ easyButtonRouter.get("/v1/clips/:id", async (c) => {
     0,
     Math.min(3600, Math.floor((clip.expiresAt - Date.now()) / 1000))
   );
-  const audio = base64ToBytes(clip.base64);
+  const audio = base64ToArrayBuffer(clip.base64);
 
   return new Response(audio, {
     headers: {
