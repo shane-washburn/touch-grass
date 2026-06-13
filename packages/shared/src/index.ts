@@ -106,6 +106,29 @@ export const CommuneResponseSchema = z.object({
 export type CommuneResponse = z.infer<typeof CommuneResponseSchema>;
 
 /* ------------------------------------------------------------------ */
+/* Easy Button — custom audio clip sharing contract                    */
+/* ------------------------------------------------------------------ */
+
+export const EasyButtonClipIdSchema = z
+  .string()
+  .regex(/^[a-f0-9]{32}$/, "Invalid clip id");
+export type EasyButtonClipId = z.infer<typeof EasyButtonClipIdSchema>;
+
+export const EasyButtonClipUploadResponseSchema = z.object({
+  clipId: EasyButtonClipIdSchema,
+  /** ISO timestamp; Redis TTL is the source of truth server-side. */
+  expiresAt: z.string().datetime(),
+});
+export type EasyButtonClipUploadResponse = z.infer<
+  typeof EasyButtonClipUploadResponseSchema
+>;
+
+export const EasyButtonShareStateSchema = z.object({
+  clipId: EasyButtonClipIdSchema,
+});
+export type EasyButtonShareState = z.infer<typeof EasyButtonShareStateSchema>;
+
+/* ------------------------------------------------------------------ */
 /* Stats — suite-wide interaction counters & leaderboard contract       */
 /* ------------------------------------------------------------------ */
 
@@ -143,6 +166,10 @@ export const STAT_METRICS: Record<string, Record<string, string>> = {
   "balloon-blower": {
     filled: "Balloons filled",
     popped: "Balloons popped",
+  },
+  "easy-button": {
+    presses: "Easy Button presses",
+    recordings: "Unique custom recordings played",
   },
 };
 
