@@ -1,37 +1,41 @@
 /**
  * Lightweight GA4 wrapper.
  *
- * No-ops unless VITE_GA_MEASUREMENT_ID is configured. The app shell owns page
- * views/duration; shared components can report cross-module actions without
- * importing app code.
+ * No-ops unless the app shell passes a GA measurement ID. The app shell owns
+ * page views/duration; shared components can report cross-module actions
+ * without importing app code.
  */
 
-const viteEnv = (import.meta as unknown as { env?: Record<string, string> })
-  .env;
-
-const GA_ID = viteEnv?.VITE_GA_MEASUREMENT_ID?.trim();
 const VISITOR_KEY = "scroll-goblin:first-seen";
 
 type AnalyticsParams = Record<string, string | number | boolean | undefined>;
 
-type Gtag =
-  | ["js", Date]
-  | ["config", string, AnalyticsParams]
-  | ["event", string, AnalyticsParams]
-  | ["set", string, AnalyticsParams];
-
 declare global {
   interface Window {
-    dataLayer?: Gtag[];
-    gtag?: (...args: Gtag) => void;
+    dataLayer?: IArguments[];
+    gtag?: (...args: unknown[]) => void;
+    scrollGoblinAnalyticsDebug?: {
+      measurementId: string;
+      enabled: boolean;
+      dataLayer: () => IArguments[];
+      test: () => void;
+      pageView: () => void;
+    };
   }
 }
 
 let initialized = false;
+let gaMeasurementId: string | null = null;
 let visitorType: "new" | "returning" | null = null;
 
 function canTrack(): boolean {
-  return typeof window !== "undefined" && Boolean(GA_ID);
+  return typeof window !== "undefined" && Boolean(gaMeasurementId);
+}
+
+function setMeasurementId(measurementId?: string): string | null {
+  const nextId = measurementId?.trim();
+  if (nextId) gaMeasurementId = nextId;
+  return gaMeasurementId;
 }
 
 function getVisitorType(): "new" | "returning" {
@@ -46,21 +50,22 @@ function getVisitorType(): "new" | "returning" {
   return visitorType;
 }
 
-export function initGoogleAnalytics(): void {
-  if (!canTrack() || initialized || !GA_ID) return;
+export function initGoogleAnalytics(measurementId?: string): void {
+  const nextId = setMeasurementId(measurementId);
+  if (typeof window === "undefined" || !nextId || initialized) return;
   initialized = true;
 
   window.dataLayer = window.dataLayer ?? [];
   window.gtag =
     window.gtag ??
-    ((...args: Gtag) => {
-      window.dataLayer?.push(args);
-    });
+    function gtag() {
+      window.dataLayer?.push(arguments);
+    };
 
   const script = document.createElement("script");
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
-    GA_ID
+    nextId
   )}`;
   document.head.appendChild(script);
 
@@ -68,16 +73,32 @@ export function initGoogleAnalytics(): void {
   window.gtag("set", "user_properties", {
     visitor_type: getVisitorType(),
   });
-  window.gtag("config", GA_ID, { send_page_view: false });
+  window.gtag("config", nextId, { send_page_view: false });
+  window.scrollGoblinAnalyticsDebug = {
+    measurementId: nextId,
+    enabled: true,
+    dataLayer: () => window.dataLayer ?? [],
+    test: () =>
+      trackEvent("scroll_goblin_manual_test", {
+        debug_mode: true,
+        test_source: "console",
+      }),
+    pageView: () =>
+      trackPageView({
+        path: window.location.pathname,
+        title: document.title,
+      }),
+  };
 }
 
 export function trackEvent(
   name: string,
   params: AnalyticsParams = {}
 ): void {
-  if (!canTrack()) return;
   initGoogleAnalytics();
+  if (!canTrack() || !gaMeasurementId) return;
   window.gtag?.("event", name, {
+    send_to: gaMeasurementId,
     visitor_type: getVisitorType(),
     ...params,
   });
@@ -88,14 +109,11 @@ export function trackPageView(params: {
   title: string;
   moduleId?: string;
 }): void {
-  if (!canTrack() || !GA_ID) return;
-  initGoogleAnalytics();
-  window.gtag?.("config", GA_ID, {
+  trackEvent("page_view", {
     page_title: params.title,
     page_location: window.location.href,
     page_path: params.path,
     module_id: params.moduleId,
-    visitor_type: getVisitorType(),
   });
 }
 

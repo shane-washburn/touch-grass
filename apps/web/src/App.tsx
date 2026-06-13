@@ -15,6 +15,8 @@ import NotFound from "./pages/NotFound";
 import RouteMeta from "./seo/RouteMeta";
 import { SITE_NAME, pageTitle } from "./seo/site";
 
+const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+
 /**
  * The shell: owns global chrome (nav, background, footer) and routing.
  * Each module is lazy-loaded into its own chunk, so the landing page bundle
@@ -70,7 +72,7 @@ function GoogleAnalyticsTracker() {
   } | null>(null);
 
   useEffect(() => {
-    initGoogleAnalytics();
+    initGoogleAnalytics(GA_MEASUREMENT_ID);
   }, []);
 
   useEffect(() => {
