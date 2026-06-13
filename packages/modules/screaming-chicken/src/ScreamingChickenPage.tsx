@@ -374,9 +374,6 @@ export default function ScreamingChickenPage() {
               {/* Wing */}
               <ellipse cx={146} cy={196} rx={36} ry={24} fill="#FBBF24" stroke="#1F2937" strokeWidth={3} transform="rotate(-12 146 196)" />
 
-              {/* Belly highlight */}
-              <ellipse cx={178} cy={214} rx={34} ry={24} fill="#FDE68A" opacity={0.7} />
-
               {/* Press dent (positioned every frame, clipped to the body) */}
               <ellipse
                 ref={dentRef}
