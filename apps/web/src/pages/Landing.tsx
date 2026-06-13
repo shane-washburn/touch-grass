@@ -1,6 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Dices, Sparkles } from "lucide-react";
-import { Button, Card } from "@scroll-goblin/ui";
+import {
+  Button,
+  Card,
+  trackModuleTileClick,
+  trackSurpriseMeClick,
+} from "@scroll-goblin/ui";
 import { MODULES } from "../modules/registry";
 
 export default function Landing() {
@@ -9,7 +14,13 @@ export default function Landing() {
 
   const goToRandomModule = () => {
     const pick = visible[Math.floor(Math.random() * visible.length)];
-    if (pick) navigate(pick.path);
+    if (pick) {
+      trackSurpriseMeClick({
+        destinationModuleId: pick.id,
+        destinationPath: pick.path,
+      });
+      navigate(pick.path);
+    }
   };
   const palette = [
     "bg-brand-primary",
@@ -60,7 +71,12 @@ export default function Landing() {
 
       <div className="grid gap-bento sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((m, index) => (
-          <Link key={m.id} to={m.path} className="group">
+          <Link
+            key={m.id}
+            to={m.path}
+            className="group"
+            onClick={() => trackModuleTileClick({ moduleId: m.id, index })}
+          >
             <Card
               className={`h-full p-5 transition-[transform,box-shadow] duration-100 group-hover:-translate-y-1 group-active:translate-x-1 group-active:translate-y-1 group-active:shadow-neo-pressed ${
                 tileColors[index % tileColors.length]
