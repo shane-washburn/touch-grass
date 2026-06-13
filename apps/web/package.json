@@ -11,6 +11,7 @@
   "dependencies": {
     "@scroll-goblin/module-balloon-blower": "workspace:*",
     "@scroll-goblin/module-commune-with-god": "workspace:*",
+    "@scroll-goblin/module-easy-button": "workspace:*",
     "@scroll-goblin/module-emoji-translator": "workspace:*",
     "@scroll-goblin/module-potato-painter": "workspace:*",
     "@scroll-goblin/module-screaming-chicken": "workspace:*",

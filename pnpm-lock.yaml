@@ -63,6 +63,9 @@ importers:
       '@scroll-goblin/module-commune-with-god':
         specifier: workspace:*
         version: link:../../packages/modules/commune-with-god
+      '@scroll-goblin/module-easy-button':
+        specifier: workspace:*
+        version: link:../../packages/modules/easy-button
       '@scroll-goblin/module-emoji-translator':
         specifier: workspace:*
         version: link:../../packages/modules/emoji-translator
@@ -148,6 +151,31 @@ importers:
         version: 5.9.3
 
   packages/modules/commune-with-god:
+    dependencies:
+      '@scroll-goblin/shared':
+        specifier: workspace:*
+        version: link:../../shared
+      '@scroll-goblin/ui':
+        specifier: workspace:*
+        version: link:../../ui
+      lucide-react:
+        specifier: ^0.451.0
+        version: 0.451.0(react@18.3.1)
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.11
+        version: 18.3.31
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.21(@types/node@22.19.20)
+
+  packages/modules/easy-button:
     dependencies:
       '@scroll-goblin/shared':
         specifier: workspace:*
