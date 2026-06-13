@@ -14,4 +14,13 @@ export {
 export type { AudioBus } from "./audio";
 export { buildShareUrl, consumeShareSnapshot } from "./share";
 export { trackStat, trackVisit } from "./stats";
+export {
+  initGoogleAnalytics,
+  trackEvent,
+  trackModuleTileClick,
+  trackPageDuration,
+  trackPageView,
+  trackShareButtonPress,
+  trackSurpriseMeClick,
+} from "./analytics";
 export type { ShareEnvelope } from "./share";

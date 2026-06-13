@@ -1,13 +1,19 @@
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy, useEffect, useRef } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { Trophy } from "lucide-react";
-import { trackVisit } from "@scroll-goblin/ui";
+import {
+  initGoogleAnalytics,
+  trackPageDuration,
+  trackPageView,
+  trackVisit,
+} from "@scroll-goblin/ui";
 import { MODULES } from "./modules/registry";
 import Landing from "./pages/Landing";
 import Leaderboard from "./pages/Leaderboard";
 import NotFound from "./pages/NotFound";
 import RouteMeta from "./seo/RouteMeta";
+import { SITE_NAME, pageTitle } from "./seo/site";
 
 /**
  * The shell: owns global chrome (nav, background, footer) and routing.
@@ -31,6 +37,80 @@ function VisitTracker() {
     );
     if (module) trackVisit(module.id);
   }, [pathname]);
+  return null;
+}
+
+function routeAnalytics(pathname: string) {
+  if (pathname === "/") {
+    return { path: "/", title: SITE_NAME };
+  }
+  if (pathname === "/leaderboard") {
+    return { path: "/leaderboard", title: pageTitle("Leaderboard") };
+  }
+  const module = MODULES.find(
+    (m) => pathname === m.path || pathname.startsWith(`${m.path}/`)
+  );
+  if (module) {
+    return {
+      path: module.path,
+      title: pageTitle(module.title),
+      moduleId: module.id,
+    };
+  }
+  return { path: pathname, title: pageTitle("404: Goblin not found") };
+}
+
+function GoogleAnalyticsTracker() {
+  const { pathname } = useLocation();
+  const current = useRef<{
+    path: string;
+    title: string;
+    moduleId?: string;
+    startedAt: number;
+  } | null>(null);
+
+  useEffect(() => {
+    initGoogleAnalytics();
+  }, []);
+
+  useEffect(() => {
+    const now = performance.now();
+    if (current.current) {
+      trackPageDuration({
+        path: current.current.path,
+        title: current.current.title,
+        moduleId: current.current.moduleId,
+        durationMs: now - current.current.startedAt,
+      });
+    }
+
+    const next = routeAnalytics(pathname);
+    current.current = { ...next, startedAt: now };
+    trackPageView(next);
+  }, [pathname]);
+
+  useEffect(() => {
+    const flushDuration = () => {
+      if (!current.current) return;
+      trackPageDuration({
+        path: current.current.path,
+        title: current.current.title,
+        moduleId: current.current.moduleId,
+        durationMs: performance.now() - current.current.startedAt,
+      });
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "hidden") flushDuration();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("pagehide", flushDuration);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("pagehide", flushDuration);
+      flushDuration();
+    };
+  }, []);
+
   return null;
 }
 
@@ -73,6 +153,7 @@ export default function App() {
         >
           <VisitTracker />
           <RouteMeta />
+          <GoogleAnalyticsTracker />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/leaderboard" element={<Leaderboard />} />

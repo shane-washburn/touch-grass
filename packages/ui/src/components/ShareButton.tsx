@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, Link2, Share2 } from "lucide-react";
 import { buildShareUrl } from "../share";
+import { trackShareButtonPress } from "../analytics";
 
 interface ShareButtonProps {
   /** Module id used to namespace the share payload. */
@@ -33,13 +34,20 @@ export function ShareButton({
   const onShare = async () => {
     const url = buildShareUrl(moduleId, version, getState(), maxLength);
     if (!url) {
+      trackShareButtonPress({ moduleId, result: "too_long" });
       setStatus("too-long");
       setTimeout(() => setStatus("idle"), 2000);
       return;
     }
-    await navigator.clipboard.writeText(url);
-    setStatus("copied");
-    setTimeout(() => setStatus("idle"), 1500);
+    try {
+      await navigator.clipboard.writeText(url);
+      trackShareButtonPress({ moduleId, result: "copied" });
+      setStatus("copied");
+      setTimeout(() => setStatus("idle"), 1500);
+    } catch {
+      trackShareButtonPress({ moduleId, result: "failed" });
+      setStatus("idle");
+    }
   };
 
   return (
